@@ -3,6 +3,7 @@ import { ImagesSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
+import { updateLocalStorage } from "../utils/localStorage"
 
 namespace ImageCard {
   export interface ImageCardProps {
@@ -19,9 +20,9 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
   const offsetY = useRef(0)
   const { debounce } = useDebounce()
 
-  function updateLocalStorage(time?: number) {
+  function debounceLSUpdate(time?: number) {
     debounce(() => {
-      localStorage.setItem("images", JSON.stringify(images.images.value))
+      updateLocalStorage("images", images.images.value)
     }, time)
   }
 
@@ -34,7 +35,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
     const newPos = { x: newX.current, y: newY.current }
 
     ImagesSignal.default.updateImageProperty(itemKey, 'position', newPos)
-    updateLocalStorage()
+    debounceLSUpdate()
   }
 
   function _handleMouseUp(e: MouseEvent) {
@@ -62,7 +63,8 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
-        maxWidth: '300px',
+        width: `${item.dimensions.w}px`,
+        height: `${item.dimensions.h}px`,
         backgroundColor: '#181818'
       }}
     >
@@ -70,7 +72,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
       <button className="flex justify-center items-center hover:bg-blue-500 w-5 h-5 text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
         ImagesSignal.default.removeImage(item.id)
         ImagesSignal.default.images.notify()
-        updateLocalStorage()
+        debounceLSUpdate()
       }}>x</button>
       <img
         src={item.contents}

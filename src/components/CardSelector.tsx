@@ -1,5 +1,8 @@
 import { useRef } from "kaioken"
 import { ImagesSignal, NotesSigal } from "../signals"
+import { updateLocalStorage } from "../utils/localStorage"
+import notes from "../signals/notes"
+import images from "../signals/images"
 
 export function CardSelector() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -32,6 +35,7 @@ function StickyNote() {
         h: 200
       }
     })
+    updateLocalStorage("notes", notes.notes.value)
   }
 
   return (
@@ -58,32 +62,44 @@ function StickyNote() {
 }
 
 function Image() {
-  function _handleClick() {
+  function _handleClick(mouseEvent: MouseEvent) {
     const input = document.createElement('input')
     input.type = 'file'
     input.onchange = (e: any) => {
       const file = e.target.files[0]
       const reader = new FileReader()
       reader.readAsDataURL(file)
-      reader.onload = readerEvent => {
-        const content = readerEvent.target?.result;
-        let img: string = '';
-        if (typeof content == 'string') img = content?.split(':')[1]
-        if (!img) return
+      reader.onload = function(readerEvent) {
+        let image = document.createElement('img')
+        image.onload = function() {
+          const { width, height } = image
 
-        ImagesSignal.default.addImage({
-          type: "image",
-          title: "New Image",
-          contents: content as string,
-          position: {
-            x: e.pageX - 100,
-            y: e.pageY + (window.innerHeight / 2) - 100
-          },
-          dimensions: {
-            w: 200,
-            h: 200
-          }
-        })
+          // normalize the dimensions so that they fit within a constraint
+          const len = Math.sqrt(width * width + height * height)
+          const normalizedW = (width / len) * 300
+          const normalizedH = (height / len) * 300
+
+          const content = readerEvent.target?.result;
+          let img: string = '';
+          if (typeof content == 'string') img = content?.split(':')[1]
+          if (!img) return
+
+          ImagesSignal.default.addImage({
+            type: "image",
+            title: "New Image",
+            contents: content as string,
+            position: {
+              x: mouseEvent.pageX - 100,
+              y: mouseEvent.pageY + (window.innerHeight / 2) - 100
+            },
+            dimensions: {
+              w: normalizedW,
+              h: normalizedH
+            }
+          })
+          updateLocalStorage("images", images.images.value)
+        }
+        image.src = readerEvent.target?.result as string
       }
     }
     input.click()

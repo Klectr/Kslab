@@ -46,6 +46,7 @@ export function MiniMap() {
 
       {Object.keys(images.images.value).map((imageKey: ImageCardType['id']) => {
         const image = images.images.value[imageKey]
+        const el = useRef(null)
 
         function _handleItemClick(_e: MouseEvent) {
           window.scrollTo({
@@ -56,7 +57,7 @@ export function MiniMap() {
         }
 
         return (
-          <div className={"bg-green-500 hover:bg-blue-500 cursor-pointer"}
+          <div ref={el} className={"bg-green-500 hover:bg-blue-500 cursor-pointer"}
             onclick={_handleItemClick}
             style={{
               position: 'absolute',
