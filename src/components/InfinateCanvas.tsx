@@ -1,31 +1,30 @@
-import { useState, useRef, useEffect } from "kaioken"
+import { useRef, useEffect } from "kaioken"
 import { CardSelector } from "./CardSelector"
-import { NotesSigal } from "../signals"
+import { NotesSigal, canvasDimentsion } from "../signals"
 import { NoteCard } from "./NoteCard"
 import notes from "../signals/notes"
+import { MiniMap } from "./MiniMap"
 
 export default function InfiniteCanvas() {
-  const [dimensions, setDimensions] = useState({ width: 3000, height: 3000 })
   const containerRef = useRef<HTMLDivElement>(null)
 
 
   useEffect(() => {
     window.scrollTo({
-      left: (dimensions.width / 2) - (window.innerWidth / 2),
-      top: (dimensions.height / 2) - (window.innerHeight / 2)
+      left: (canvasDimentsion.value.width / 2) - (window.innerWidth / 2),
+      top: (canvasDimentsion.value.height / 2) - (window.innerHeight / 2)
     })
 
     const updateDimensions = () => {
-      setDimensions((prevDimensions) => ({
-        width: Math.max(prevDimensions.width, window.innerWidth),
-        height: Math.max(prevDimensions.height, window.innerHeight),
-      }))
+      canvasDimentsion.value = {
+        width: Math.max(canvasDimentsion.value.width, window.innerWidth),
+        height: Math.max(canvasDimentsion.value.height, window.innerHeight),
+      }
     }
 
     updateDimensions()
     window.addEventListener("resize", updateDimensions)
     notes.loadLocalStorage()
-
 
     return () => {
       window.removeEventListener("resize", updateDimensions)
@@ -35,6 +34,7 @@ export default function InfiniteCanvas() {
   return (
     <>
       <CardSelector />
+      <MiniMap />
 
       <div
         className="h-screen w-full absolute top-0 left-0"
@@ -43,8 +43,8 @@ export default function InfiniteCanvas() {
           className="absolute top-0 left-0"
           ref={containerRef}
           style={{
-            width: `${dimensions.width.toString()}px`,
-            height: `${dimensions.width.toString()}px`,
+            width: `${canvasDimentsion.value.width}px`,
+            height: `${canvasDimentsion.value.width}px`,
             backgroundSize: "30px 30px",
             backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)",
           }}>

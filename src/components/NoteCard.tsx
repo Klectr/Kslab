@@ -3,7 +3,7 @@ import { NotesSigal, focusedItem } from "../signals"
 import { Card } from "../types"
 import { useDebounce } from "../utils/useDebounce"
 import notes from "../signals/notes"
-import { save } from "@tauri-apps/api/dialog"
+import { LayerEnum } from "../utils/enums"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -56,14 +56,12 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     window.addEventListener('mouseup', _handleMouseUp)
   }
 
-
-
   return (
     <div
       onmousedown={() => focusedItem.value = itemKey}
       className="select-none transition flex flex-col justify-stretch shadow-lg rounded border border-[#3c3c3c] absolute"
       style={{
-        zIndex: focusedItem.value == itemKey ? '999' : '0',
+        zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         width: `${item.dimensions.w}px`,
         height: `${item.dimensions.h}px`,
         top: `${item.position.y}px`,
