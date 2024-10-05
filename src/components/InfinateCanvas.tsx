@@ -10,7 +10,6 @@ import images from "../signals/images"
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
 
-
   useEffect(() => {
     window.scrollTo({
       left: (canvasDimentsion.value.width / 2) - (window.innerWidth / 2),
@@ -36,40 +35,36 @@ export default function InfiniteCanvas() {
 
   return (
     <>
-      <>
-        <>
-          <CardSelector />
-          <MiniMap />
+      <CardSelector />
+      <MiniMap />
 
-          <div
-            className="h-screen w-full absolute top-0 left-0"
-          >
-            <div
-              className="absolute top-0 left-0"
-              ref={containerRef}
-              style={{
-                width: `${canvasDimentsion.value.width}px`,
-                height: `${canvasDimentsion.value.width}px`,
-                backgroundSize: "30px 30px",
-                backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)",
-              }}>
-              {Object.keys(NotesSigal.default.notes.value).map((itemKey: string) => {
-                const item = NotesSigal.default.notes.value[itemKey]
-                return (
-                  <NoteCard key={itemKey} data={item} />
-                )
-              })}
+      <div
+        className="h-screen w-full absolute top-0 left-0"
+      >
+        <div
+          className="absolute top-0 left-0"
+          ref={containerRef}
+          style={{
+            width: `${canvasDimentsion.value.width}px`,
+            height: `${canvasDimentsion.value.width}px`,
+            backgroundSize: "30px 30px",
+            backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)",
+          }}>
+          {Object.keys(NotesSigal.default.notes.value).map((itemKey: string) => {
+            const item = NotesSigal.default.notes.value[itemKey]
+            return (
+              <NoteCard key={itemKey} data={item} />
+            )
+          })}
 
-              {Object.keys(ImagesSignal.default.images.value).map((itemKey: string) => {
-                const item = ImagesSignal.default.images.value[itemKey]
-                return (
-                  <ImageCard key={itemKey} data={item} />
-                )
-              })}
-            </div>
-          </div>
-        </>
-      </>
+          {Object.keys(ImagesSignal.default.images.value).map((itemKey: string) => {
+            const item = ImagesSignal.default.images.value[itemKey]
+            return (
+              <ImageCard key={itemKey} data={item} />
+            )
+          })}
+        </div>
+      </div>
     </>
   )
 }
