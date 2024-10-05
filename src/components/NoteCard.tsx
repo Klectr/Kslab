@@ -18,6 +18,9 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   const newY = useRef(0)
   const offsetX = useRef(0)
   const offsetY = useRef(0)
+  const initialResizeX = useRef(0)
+  const initialResizeY = useRef(0)
+
   const { debounce } = useDebounce()
 
   function updateLocalStorage(time?: number) {
@@ -52,6 +55,25 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     pressed.value = true
     window.addEventListener('mousemove', _handleMouseMove)
     window.addEventListener('mouseup', _handleMouseUp)
+  }
+
+  function _handleResizeMove(e: MouseEvent) {
+    const { pageX, pageY } = e
+    const [newX, newY] = [initialResizeX.current - pageX, initialResizeY.current - pageY]
+    NotesSigal.default.updateNoteProperty(itemKey, 'dimensions', { w: -newX + item.dimensions.w, h: -newY + item.dimensions.h })
+  }
+
+  function _handleResizeMouseDown(e: MouseEvent) {
+    if (pressed.value) return _handleResizeMouseUp()
+    initialResizeX.current = e.pageX
+    initialResizeY.current = e.pageY
+    pressed.value = true
+    window.addEventListener('mousemove', _handleResizeMove)
+  }
+
+  function _handleResizeMouseUp() {
+    pressed.value = false
+    window.removeEventListener('mousemove', _handleResizeMove)
   }
 
   return (
@@ -91,6 +113,26 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
             saved.value = true
           }}
         />
+
+        <svg
+          onmousedown={_handleResizeMouseDown}
+          onmouseup={_handleResizeMouseUp}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#333"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className="cursor-[se-resize] absolute right-0 bottom-0 rotate-[225deg]"
+        >
+          <path d="M2 10v4" />
+          <path d="M4 8v8" />
+          <path d="M6 5v14" />
+        </svg>
+
       </div>
     </div >
 
