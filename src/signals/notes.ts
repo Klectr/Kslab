@@ -1,5 +1,6 @@
 import { signal } from "kaioken"
 import { Card } from "../types"
+import { focusedItem } from "."
 
 export type NoteCardType = Card<"note">
 
@@ -16,6 +17,7 @@ function addNote(data: Omit<NoteCardType, "id">) {
   }
   notes.value[newCard.id] = newCard
   notes.notify()
+  focusedItem.value = newCard.id
 }
 
 function removeNote(id: NoteCardType["id"]) {

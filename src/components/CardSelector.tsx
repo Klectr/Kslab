@@ -19,7 +19,6 @@ export function CardSelector() {
 
 function StickyNote() {
   function _handleClick(e: MouseEvent) {
-
     NotesSigal.default.addNote({
       type: "note",
       title: "New Note",

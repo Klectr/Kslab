@@ -1,5 +1,6 @@
 import { signal } from "kaioken"
 import { Card } from "../types"
+import { focusedItem } from "."
 
 export type ImageCardType = Card<"image">
 
@@ -16,6 +17,7 @@ function addImage(data: Omit<ImageCardType, "id">) {
   }
   images.value[newCard.id] = newCard
   images.notify()
+  focusedItem.value = newCard.id
 }
 
 function removeImage(id: ImageCardType["id"]) {
