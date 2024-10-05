@@ -1,8 +1,8 @@
 import { signal, useEffect, useRef } from "kaioken"
-import notes from "../signals/notes"
-import { Card } from "../types/Card"
+import notes, { NoteCardType } from "../signals/notes"
 import { canvasDimentsion } from "../signals"
 import { LayerEnum } from "../utils/enums"
+import images, { ImageCardType } from "../signals/images"
 
 const _MAP_OFFSET = 20
 const _MAP_SCALE_FACTOR = 10
@@ -44,8 +44,36 @@ export function MiniMap() {
       borderRadius: '4px'
     }}>
 
+      {Object.keys(images.images.value).map((imageKey: ImageCardType['id']) => {
+        const image = images.images.value[imageKey]
 
-      {Object.keys(notes.notes.value).map((noteKey: Card['id']) => {
+        function _handleItemClick(_e: MouseEvent) {
+          window.scrollTo({
+            left: image.position.x - ((viewportWidth / 2) - (image.dimensions.w / 2)),
+            top: image.position.y - ((viewportHeight / 2) - (image.dimensions.h / 2)),
+            behavior: 'smooth'
+          })
+        }
+
+        return (
+          <div className={"bg-green-500 hover:bg-blue-500 cursor-pointer"}
+            onclick={_handleItemClick}
+            style={{
+              position: 'absolute',
+              width: `${image.dimensions.w / _MAP_SCALE_FACTOR}px`,
+              height: `${image.dimensions.h / _MAP_SCALE_FACTOR}px`,
+              top: `${(image.position.y / _MAP_SCALE_FACTOR)}px`,
+              left: `${(image.position.x / _MAP_SCALE_FACTOR)}px`,
+              border: '1px solid #222',
+              borderRadius: '2px',
+              zIndex: `${LayerEnum.MINIMAP + 1}`
+            }}
+          ></div>
+        )
+      })}
+
+
+      {Object.keys(notes.notes.value).map((noteKey: NoteCardType['id']) => {
         const note = notes.notes.value[noteKey]
 
         function _handleItemClick(_e: MouseEvent) {

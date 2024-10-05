@@ -1,14 +1,13 @@
 import { signal, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
-import { Card } from "../types"
 import { useDebounce } from "../utils/useDebounce"
-import notes from "../signals/notes"
+import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
 
 namespace NoteCard {
   export interface NoteCardProps {
-    key: Card['id']
-    data: Card
+    key: NoteCardType['id']
+    data: NoteCardType
   }
 }
 
@@ -23,7 +22,6 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
 
   function updateLocalStorage(time?: number) {
     debounce(() => {
-      console.log(itemKey, "updated storage")
       localStorage.setItem("notes", JSON.stringify(notes.notes.value))
     }, time)
   }
@@ -77,6 +75,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
           <button className="text-md" onclick={(_e: Event) => {
             NotesSigal.default.removeNote(item.id)
             NotesSigal.default.notes.notify()
+            updateLocalStorage()
           }}>x</button>
         </div>
         <hr className="border border-[#3c3c3c]" />

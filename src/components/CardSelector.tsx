@@ -1,5 +1,5 @@
 import { useRef } from "kaioken"
-import { NotesSigal } from "../signals"
+import { ImagesSignal, NotesSigal } from "../signals"
 
 export function CardSelector() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -60,7 +60,34 @@ function StickyNote() {
 
 function Image() {
   function _handleClick() {
-    alert("created image")
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.onchange = (e: any) => {
+      const file = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = readerEvent => {
+        const content = readerEvent.target?.result;
+        let img: string = '';
+        if (typeof content == 'string') img = content?.split(':')[1]
+        if (!img) return
+
+        ImagesSignal.default.addImage({
+          type: "image",
+          title: "New Image",
+          contents: content as string,
+          position: {
+            x: e.pageX - 100,
+            y: e.pageY + (window.innerHeight / 2) - 100
+          },
+          dimensions: {
+            w: 200,
+            h: 200
+          }
+        })
+      }
+    }
+    input.click()
   }
 
   return (
@@ -93,3 +120,5 @@ function Image() {
     </button>
   )
 }
+
+

@@ -1,31 +1,31 @@
 import { signal } from "kaioken"
 import { Card } from "../types"
 
-const notes = signal<Record<Card["id"], Card>>({})
+export type NoteCardType = Card<"note">
+
+const notes = signal<Record<NoteCardType["id"], NoteCardType>>({})
 
 function loadLocalStorage() {
   notes.value = JSON.parse(localStorage.getItem("notes") ?? "{}")
 }
 
-function addNote(data: Omit<Card, "id">) {
+function addNote(data: Omit<NoteCardType, "id">) {
   const newCard = {
     ...data,
     id: crypto.randomUUID(),
   }
   notes.value[newCard.id] = newCard
   notes.notify()
-  //updateLocalStorage()
 }
 
-function removeNote(id: Card["id"]) {
+function removeNote(id: NoteCardType["id"]) {
   delete notes.value[id]
   notes.notify()
-  //updateLocalStorage()
 }
-function updateNoteProperty<K extends keyof Card>(
-  id: Card["id"],
+function updateNoteProperty<K extends keyof NoteCardType>(
+  id: NoteCardType["id"],
   property: K,
-  data: Card[K]
+  data: NoteCardType[K]
 ) {
   const newData = {
     ...notes.value[id],
@@ -33,7 +33,6 @@ function updateNoteProperty<K extends keyof Card>(
   }
   notes.value[id] = newData
   notes.notify()
-  //updateLocalStorage()
 }
 
 export default {
@@ -41,6 +40,5 @@ export default {
   addNote,
   removeNote,
   updateNoteProperty,
-  //updateLocalStorage,
   loadLocalStorage,
 }

@@ -12,6 +12,7 @@ function createState(): UseDebounceState {
 
 export function useDebounce() {
   if (!sideEffectsEnabled()) return createState()
+
   return useHook("useDebounce", createState, ({ hook, update, isInit }) => {
     if (!isInit) return { timer: hook.timer, debounce: hook.debounce }
 
