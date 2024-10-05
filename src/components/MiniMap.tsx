@@ -31,6 +31,8 @@ export function MiniMap() {
     return () => window.removeEventListener('scroll', _handleScroll)
   }, [])
 
+
+
   return (
     <div ref={el} style={{
       position: 'fixed',
@@ -45,33 +47,44 @@ export function MiniMap() {
 
       {Object.keys(notes.notes.value).map((noteKey: Card['id']) => {
         const note = notes.notes.value[noteKey]
+
+        function _handleItemClick(_e: MouseEvent) {
+          window.scrollTo({
+            left: note.position.x - ((viewportWidth / 2) - (note.dimensions.w / 2)),
+            top: note.position.y - ((viewportHeight / 2) - (note.dimensions.h / 2)),
+            behavior: 'smooth'
+          })
+        }
+
         return (
-          <div
+          <div className={"bg-gray-500 hover:bg-blue-500 cursor-pointer"}
+            onclick={_handleItemClick}
             style={{
               position: 'absolute',
               width: `${note.dimensions.w / _MAP_SCALE_FACTOR}px`,
               height: `${note.dimensions.h / _MAP_SCALE_FACTOR}px`,
               top: `${(note.position.y / _MAP_SCALE_FACTOR)}px`,
               left: `${(note.position.x / _MAP_SCALE_FACTOR)}px`,
-              backgroundColor: "#666",
               border: '1px solid #222',
-              borderRadius: '2px'
+              borderRadius: '2px',
+              zIndex: `${LayerEnum.MINIMAP + 1}`
             }}
           ></div>
         )
       })}
 
-      <div style={{
-        position: 'absolute',
-        width: `${viewportWidth / _MAP_SCALE_FACTOR}px`,
-        height: `${viewportHeight / _MAP_SCALE_FACTOR}px`,
-        top: `${scrollY.value / _MAP_SCALE_FACTOR}px`,
-        left: `${scrollX.value / _MAP_SCALE_FACTOR}px`,
-        border: '1px solid #777',
-        zIndex: `${LayerEnum.MINIMAP}`,
-        backgroundColor: '#fff1',
-        borderRadius: '2px'
-      }}></div>
+      <div
+        className={'bg-blue-200 bg-opacity-10'}
+        style={{
+          position: 'absolute',
+          width: `${viewportWidth / _MAP_SCALE_FACTOR}px`,
+          height: `${viewportHeight / _MAP_SCALE_FACTOR}px`,
+          top: `${scrollY.value / _MAP_SCALE_FACTOR}px`,
+          left: `${scrollX.value / _MAP_SCALE_FACTOR}px`,
+          border: '1px solid #777',
+          zIndex: `${LayerEnum.MINIMAP}`,
+          borderRadius: '2px'
+        }}></div>
     </div >
   )
 }
