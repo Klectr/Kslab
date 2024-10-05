@@ -21,7 +21,6 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
 
   function updateLocalStorage(time?: number) {
     debounce(() => {
-      console.log(itemKey, "updated storage")
       localStorage.setItem("images", JSON.stringify(images.images.value))
     }, time)
   }
@@ -61,23 +60,20 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
       className="select-none transition flex flex-col justify-stretch shadow-lg rounded border border-[#3c3c3c] absolute"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
-        width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h}px`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
+        maxWidth: '300px',
         backgroundColor: '#181818'
       }}
     >
 
-      <button className="text-md" onclick={(_e: Event) => {
+      <button className="flex justify-center items-center hover:bg-blue-500 w-5 h-5 text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
         ImagesSignal.default.removeImage(item.id)
         ImagesSignal.default.images.notify()
         updateLocalStorage()
       }}>x</button>
       <img
         src={item.contents}
-        width={'100%'}
-        height={'100%'}
         alt={item.title}
       />
     </div >
