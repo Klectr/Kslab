@@ -1,4 +1,4 @@
-export type CardTypes = "note" | "image"
+export type CardTypes = "note" | "image" | "text"
 export type positionCoords = { x: number; y: number }
 export type dimensionCoords = { w: number; h: number }
 

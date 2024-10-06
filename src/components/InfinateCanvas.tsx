@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "kaioken"
-import { ImagesSignal, NotesSigal, canvasDimentsion } from "../signals"
+import { ImagesSignal, NotesSigal, TextSignal, canvasDimentsion } from "../signals"
 import { NoteCard } from "./NoteCard"
 import notes from "../signals/notes"
 import { MiniMap } from "./MiniMap"
@@ -8,6 +8,8 @@ import images from "../signals/images"
 import { CardSelector } from "./cardSelector/CardSelector"
 import { Logo } from "./Logo"
 import { useThemeDetector } from "../utils/useThemeDetector"
+import { isTheme } from "../utils/isTheme"
+import { TextItem } from "./TextItem"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -74,6 +76,14 @@ export default function InfiniteCanvas() {
               <ImageCard key={itemKey} data={item} />
             )
           })}
+
+          {Object.keys(TextSignal.default.texts.value).map((itemKey: string) => {
+            const item = TextSignal.default.texts.value[itemKey]
+            return (
+              <TextItem key={itemKey} data={item} />
+            )
+          })}
+
         </div>
       </div>
     </>
