@@ -1,4 +1,4 @@
-import { signal, useRef } from "kaioken"
+import { signal, useCallback, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
@@ -60,20 +60,29 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   function _handleResizeMove(e: MouseEvent) {
     const { pageX, pageY } = e
     const [newX, newY] = [initialResizeX.current - pageX, initialResizeY.current - pageY]
-    NotesSigal.default.updateNoteProperty(itemKey, 'dimensions', { w: -newX + item.dimensions.w, h: -newY + item.dimensions.h })
+
+    const newW = -newX + item.dimensions.w
+    const newH = -newY + item.dimensions.h
+    const newDim = { w: newW, h: newH }
+
+    NotesSigal.default.updateNoteProperty(itemKey, 'dimensions', newDim)
+    NotesSigal.default.notes.notify()
   }
 
+
   function _handleResizeMouseDown(e: MouseEvent) {
-    if (pressed.value) return _handleResizeMouseUp()
     initialResizeX.current = e.pageX
     initialResizeY.current = e.pageY
     pressed.value = true
     window.addEventListener('mousemove', _handleResizeMove)
+    window.addEventListener('mouseup', _handleResizeMouseUp)
   }
 
   function _handleResizeMouseUp() {
     pressed.value = false
+    updateLocalStorage()
     window.removeEventListener('mousemove', _handleResizeMove)
+    window.removeEventListener('mouseup', _handleResizeMouseUp)
   }
 
   return (
@@ -116,7 +125,6 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
 
         <svg
           onmousedown={_handleResizeMouseDown}
-          onmouseup={_handleResizeMouseUp}
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
