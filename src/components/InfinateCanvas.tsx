@@ -1,11 +1,11 @@
 import { useRef, useEffect } from "kaioken"
-import { CardSelector } from "./CardSelector"
 import { ImagesSignal, NotesSigal, canvasDimentsion } from "../signals"
 import { NoteCard } from "./NoteCard"
 import notes from "../signals/notes"
 import { MiniMap } from "./MiniMap"
 import { ImageCard } from "./ImageCard"
 import images from "../signals/images"
+import { CardSelector } from "./cardSelector/CardSelector"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
