@@ -1,4 +1,4 @@
-import { signal, useCallback, useRef } from "kaioken"
+import { signal, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
@@ -123,26 +123,34 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
           }}
         />
 
-        <svg
-          onmousedown={_handleResizeMouseDown}
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#333"
-          stroke-width="1"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          className="cursor-[se-resize] absolute right-0 bottom-0 rotate-[225deg]"
-        >
-          <path d="M2 10v4" />
-          <path d="M4 8v8" />
-          <path d="M6 5v14" />
-        </svg>
+        <ExpandIcon cb={_handleResizeMouseDown} />
 
       </div>
     </div >
 
+  )
+}
+
+function ExpandIcon({ cb }: {
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+}) {
+  return (
+    <svg
+      onmousedown={cb}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333"
+      stroke-width="1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="cursor-[se-resize] absolute right-0 bottom-0 rotate-[225deg]"
+    >
+      <path d="M2 10v4" />
+      <path d="M4 8v8" />
+      <path d="M6 5v14" />
+    </svg>
   )
 }

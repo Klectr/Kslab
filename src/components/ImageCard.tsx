@@ -4,6 +4,7 @@ import { useDebounce } from "../utils/useDebounce"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
 import { updateLocalStorage } from "../utils/localStorage"
+import { noop } from "kaioken/utils"
 
 namespace ImageCard {
   export interface ImageCardProps {
@@ -13,12 +14,14 @@ namespace ImageCard {
 }
 
 export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps) {
+  const { debounce } = useDebounce()
   const pressed = signal(false)
   const newX = useRef(0)
   const newY = useRef(0)
   const offsetX = useRef(0)
   const offsetY = useRef(0)
-  const { debounce } = useDebounce()
+  const initialResizeX = useRef(0)
+  const initialResizeY = useRef(0)
 
   function debounceLSUpdate(time?: number) {
     debounce(() => {
@@ -55,6 +58,35 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
     window.addEventListener('mouseup', _handleMouseUp)
   }
 
+  function _handleResizeMove(e: MouseEvent) {
+    const { pageX, pageY } = e
+    const [newX, newY] = [initialResizeX.current - pageX, initialResizeY.current - pageY]
+
+    const newW = -newX + item.dimensions.w
+    const newH = -newY + item.dimensions.h
+    const ratio = Math.min(newW / item.dimensions.w, newH / item.dimensions.h)
+    const newDim = { w: item.dimensions.w * ratio, h: item.dimensions.h * ratio }
+
+    ImagesSignal.default.updateImageProperty(itemKey, 'dimensions', newDim)
+    ImagesSignal.default.images.notify()
+  }
+
+
+  function _handleResizeMouseDown(e: MouseEvent) {
+    initialResizeX.current = e.pageX
+    initialResizeY.current = e.pageY
+    pressed.value = true
+    window.addEventListener('mousemove', _handleResizeMove)
+    window.addEventListener('mouseup', _handleResizeMouseUp)
+  }
+
+  function _handleResizeMouseUp() {
+    pressed.value = false
+    debounceLSUpdate()
+    window.removeEventListener('mousemove', _handleResizeMove)
+    window.removeEventListener('mouseup', _handleResizeMouseUp)
+  }
+
   return (
     <div
       onmousedown={_handleMouseDown}
@@ -65,20 +97,46 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
         left: `${item.position.x}px`,
         width: `${item.dimensions.w}px`,
         height: `${item.dimensions.h}px`,
-        backgroundColor: '#181818'
+        backgroundColor: '#181818',
+        backgroundImage: `url(${item.contents})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
       }}
     >
-
       <button className="flex justify-center items-center hover:bg-blue-500 w-5 h-5 text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
         ImagesSignal.default.removeImage(item.id)
         ImagesSignal.default.images.notify()
         debounceLSUpdate()
       }}>x</button>
-      <img
-        src={item.contents}
-        alt={item.title}
-      />
+
+      <ExpandIcon cb={_handleResizeMouseDown} />
     </div >
 
+  )
+}
+
+
+function ExpandIcon({ cb }: {
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+}) {
+  return (
+    <svg
+      onmousedown={cb}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#333"
+      stroke-width="1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="cursor-[se-resize] absolute right-0 bottom-0 rotate-[225deg]"
+    >
+      <path d="M2 10v4" />
+      <path d="M4 8v8" />
+      <path d="M6 5v14" />
+    </svg>
   )
 }
