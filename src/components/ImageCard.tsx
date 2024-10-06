@@ -4,7 +4,6 @@ import { useDebounce } from "../utils/useDebounce"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
 import { updateLocalStorage } from "../utils/localStorage"
-import { noop } from "kaioken/utils"
 
 namespace ImageCard {
   export interface ImageCardProps {
@@ -73,6 +72,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
 
 
   function _handleResizeMouseDown(e: MouseEvent) {
+    e.stopPropagation()
     initialResizeX.current = e.pageX
     initialResizeY.current = e.pageY
     pressed.value = true
