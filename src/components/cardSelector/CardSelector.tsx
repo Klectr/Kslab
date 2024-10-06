@@ -2,6 +2,7 @@ import { useRef } from "kaioken"
 import { StickyNoteButton } from "./StickyNoteButton"
 import { ImageCardButton } from "./ImageCardButton"
 import { ExportButton } from "./ExportButton"
+import { TextButton } from "./TextButton"
 
 export function CardSelector() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -15,7 +16,10 @@ export function CardSelector() {
       }}>
       <StickyNoteButton />
       <ImageCardButton />
+      <TextButton />
+
       <Divider />
+
       <ExportButton />
     </div>
   )
@@ -27,7 +31,6 @@ function Divider() {
       margin: '2px 2px',
       border: "1px solid #9c9c9c",
       borderRight: 'none',
-      borderLeft: 'none',
     }}></div>
   )
 }

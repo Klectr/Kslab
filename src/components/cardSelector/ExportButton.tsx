@@ -1,4 +1,5 @@
 import { ImagesSignal, NotesSigal } from "../../signals"
+import { defaultClassName } from "./utils"
 
 export function ExportButton() {
 
@@ -35,7 +36,7 @@ export function ExportButton() {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      className="cursor-pointer w-5 h-5 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
+      className={defaultClassName}
     >
       <path
         d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
