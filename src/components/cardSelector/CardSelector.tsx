@@ -3,6 +3,7 @@ import { StickyNoteButton } from "./StickyNoteButton"
 import { ImageCardButton } from "./ImageCardButton"
 import { ExportButton } from "./ExportButton"
 import { TextButton } from "./TextButton"
+import { ImportButton } from "./ImportButton"
 
 export function CardSelector() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -21,6 +22,7 @@ export function CardSelector() {
       <Divider />
 
       <ExportButton />
+      <ImportButton />
     </div>
   )
 }
