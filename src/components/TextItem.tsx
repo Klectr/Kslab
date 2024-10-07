@@ -3,6 +3,7 @@ import { TextSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
 import { LayerEnum } from "../utils/enums"
+import { isTheme } from "../utils/isTheme"
 
 namespace TextItem {
   export interface TextCardProps {
@@ -87,20 +88,19 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   return (
     <div
-      onmousedown={() => focusedItem.value = itemKey}
-      className="select-none transition flex flex-col justify-stretch shadow-lg rounded border border-[#3c3c3c] absolute border-dashed"
+      onmousedown={_handleMouseDown}
+      className="select-none transition flex flex-col justify-stretch rounded border border-[#3c3c3c] absolute border-dashed"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h}px`,
+        height: `${item.dimensions.h + 100}px`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
       }}
     >
-      <svg viewBox="0 0 56 18">
-        <text x="0" y="15" fill={'white'}>{item.contents}</text>
-      </svg>
-
+      <div className={'relative w-full h-full'}>
+        <p className={'w-full h-full'}>{item.contents}</p>
+      </div>
     </div >
 
   )

@@ -10,6 +10,7 @@ import { Logo } from "./Logo"
 import { useThemeDetector } from "../utils/useThemeDetector"
 import { isTheme } from "../utils/isTheme"
 import { TextItem } from "./TextItem"
+import texts from "../signals/texts"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -38,6 +39,7 @@ export default function InfiniteCanvas() {
     window.addEventListener("scrollend", _updatePosition)
     notes.loadLocalStorage()
     images.loadLocalStorage()
+    texts.loadLocalStorage()
 
     return () => {
       window.removeEventListener("resize", _updateDimensions)
