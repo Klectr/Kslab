@@ -34,15 +34,14 @@ export function MiniMap() {
 
 
   return (
-    <div ref={el} style={{
-      position: 'fixed',
-      backgroundColor: '#ffffff11',
-      width: `${width}px`,
-      height: `${height}px`,
-      translate: `${xPos}px ${yPos}px`,
-      zIndex: `${LayerEnum.MINIMAP}`,
-      borderRadius: '4px'
-    }}>
+    <div
+      className="dark:bg-[#ffffff11] bg-[#0001] fixed rounded"
+      ref={el} style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        translate: `${xPos}px ${yPos}px`,
+        zIndex: `${LayerEnum.MINIMAP}`,
+      }}>
 
       {Object.keys(images.images.value).map((imageKey: ImageCardType['id']) => {
         const image = images.images.value[imageKey]
@@ -57,16 +56,13 @@ export function MiniMap() {
         }
 
         return (
-          <div ref={el} className={"bg-green-500 hover:bg-blue-500 cursor-pointer"}
+          <div ref={el} className={"absolute dark:bg-green-500 bg-green-300 dark:hover:bg-blue-500 hover:bg-blue-300 cursor-pointer border dark:border-[#222] border-green-500 rounded"}
             onclick={_handleItemClick}
             style={{
-              position: 'absolute',
               width: `${image.dimensions.w / _MAP_SCALE_FACTOR}px`,
               height: `${image.dimensions.h / _MAP_SCALE_FACTOR}px`,
               top: `${(image.position.y / _MAP_SCALE_FACTOR)}px`,
               left: `${(image.position.x / _MAP_SCALE_FACTOR)}px`,
-              border: '1px solid #222',
-              borderRadius: '2px',
               zIndex: `${LayerEnum.MINIMAP + 1}`
             }}
           ></div>
@@ -86,16 +82,13 @@ export function MiniMap() {
         }
 
         return (
-          <div className={"bg-gray-500 hover:bg-blue-500 cursor-pointer"}
+          <div className={"absolute dark:bg-gray-500 bg-gray-300 hover:bg-blue-500 cursor-pointer border dark:border-[#222] border-gray-500 rounded"}
             onclick={_handleItemClick}
             style={{
-              position: 'absolute',
               width: `${note.dimensions.w / _MAP_SCALE_FACTOR}px`,
               height: `${note.dimensions.h / _MAP_SCALE_FACTOR}px`,
               top: `${(note.position.y / _MAP_SCALE_FACTOR)}px`,
               left: `${(note.position.x / _MAP_SCALE_FACTOR)}px`,
-              border: '1px solid #222',
-              borderRadius: '2px',
               zIndex: `${LayerEnum.MINIMAP + 1}`
             }}
           ></div>
@@ -103,16 +96,13 @@ export function MiniMap() {
       })}
 
       <div
-        className={'bg-blue-200 bg-opacity-10'}
+        className={'absolute bg-blue-200 bg-opacity-10 border dark:border-blue-800 border-blue-500 bg-blue-500 rounded'}
         style={{
-          position: 'absolute',
           width: `${viewportWidth / _MAP_SCALE_FACTOR}px`,
           height: `${viewportHeight / _MAP_SCALE_FACTOR}px`,
           top: `${scrollY.value / _MAP_SCALE_FACTOR}px`,
           left: `${scrollX.value / _MAP_SCALE_FACTOR}px`,
-          border: '1px solid #777',
-          zIndex: `${LayerEnum.MINIMAP}`,
-          borderRadius: '2px'
+          zIndex: `${LayerEnum.MINIMAP * 1000}`,
         }}></div>
     </div >
   )

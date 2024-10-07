@@ -23,11 +23,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-  color: white;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #111;
 }
