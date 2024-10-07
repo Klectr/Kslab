@@ -3,6 +3,7 @@ import notes from "../../signals/notes"
 import { Card } from "../../types"
 import { convertBase64ToJson } from "../../utils/convertBase64ToJson"
 import { updateLocalStorage } from "../../utils/localStorage"
+import { Tooltip } from "./Tooltip"
 import { defaultClassName } from "./utils"
 
 export function ImportButton() {
@@ -44,23 +45,25 @@ export function ImportButton() {
   }
 
   return (
-    <svg
-      onclick={_handleImport}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      className={"rotate-[180deg] " + defaultClassName}
-    >
-      <path
-        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" x2="12" y1="15" y2="3" />
-    </svg>
+    <Tooltip message="Import Json File">
+      <svg
+        onclick={_handleImport}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        className={"rotate-[180deg] " + defaultClassName}
+      >
+        <path
+          d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" x2="12" y1="15" y2="3" />
+      </svg>
+    </Tooltip>
   )
 }
