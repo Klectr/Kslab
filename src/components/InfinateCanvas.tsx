@@ -6,6 +6,7 @@ import { MiniMap } from "./MiniMap"
 import { ImageCard } from "./ImageCard"
 import images from "../signals/images"
 import { CardSelector } from "./cardSelector/CardSelector"
+import { isTheme } from "../utils/isTheme"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -42,13 +43,13 @@ export default function InfiniteCanvas() {
         className="h-screen w-full absolute top-0 left-0"
       >
         <div
-          className="absolute top-0 left-0"
+          className="dark:bg-black absolute top-0 left-0"
           ref={containerRef}
           style={{
             width: `${canvasDimentsion.value.width}px`,
             height: `${canvasDimentsion.value.width}px`,
             backgroundSize: "30px 30px",
-            backgroundImage: "radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px)",
+            backgroundImage: `radial-gradient(circle, rgba(${isTheme('dark') ? '255, 255, 255, 0.2' : '0, 0, 0, 0.2'}) 1px, transparent 1px)`,
           }}>
           {Object.keys(NotesSigal.default.notes.value).map((itemKey: string) => {
             const item = NotesSigal.default.notes.value[itemKey]

@@ -10,7 +10,7 @@ export function CardSelector() {
   return (
     <div
       ref={containerRef}
-      className="z-50 flex gap-1 border border-[#9c9c9c] rounded-full fixed px-4 bg-[#181818] top-2 py-1 shadow-xl"
+      className="z-50 flex gap-1 border dark:border-[#3c3c3c] border-[#ddd] rounded-full fixed px-4 dark:bg-[#222] bg-[#eee] top-2 py-1 shadow-md"
       style={{
         left: `${window.innerWidth / 2 - (containerRef.current?.getBoundingClientRect().width ?? 1) / 2}px`
       }}>

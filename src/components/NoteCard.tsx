@@ -3,6 +3,7 @@ import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
+import { isTheme } from "../utils/isTheme"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -88,31 +89,30 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   return (
     <div
       onmousedown={() => focusedItem.value = itemKey}
-      className="select-none transition flex flex-col justify-stretch shadow-lg rounded border border-[#3c3c3c] absolute"
+      className="text-[#333] dark:bg-[#111] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         width: `${item.dimensions.w}px`,
         height: `${item.dimensions.h}px`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
-        backgroundColor: '#181818',
       }}
     >
       <div className="flex-1 flex flex-col gap-1">
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
           <div style={{
             opacity: saved.value ? '0' : '100'
-          }} className={`rounded-full w-1 h-1 bg-white`}></div>
-          <button className="text-md" onclick={(_e: Event) => {
+          }} className={`rounded-full w-1 h-1 dark:bg-white bg-green-500`}></div>
+          <button className="text-md dark:text-[#777] text-black" onclick={(_e: Event) => {
             NotesSigal.default.removeNote(item.id)
             NotesSigal.default.notes.notify()
             updateLocalStorage()
           }}>x</button>
         </div>
-        <hr className="border border-[#3c3c3c]" />
+        <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
         <textarea
           placeholder={"Todo: put some note here"}
-          className="flex resize-none px-2 w-full h-full bg-transparent resize-none focus:outline-none text-gray-300"
+          className="flex resize-none px-2 w-full h-full bg-transparent resize-none focus:outline-none dark:text-gray-300"
           value={item.contents}
           onkeypress={() => { saved.value = false }}
           onchange={(e) => {
@@ -142,7 +142,7 @@ function ExpandIcon({ cb }: {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#333"
+      stroke={isTheme('dark') ? "#777" : "#999"}
       stroke-width="1"
       stroke-linecap="round"
       stroke-linejoin="round"

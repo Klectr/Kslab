@@ -4,6 +4,7 @@ import { useDebounce } from "../utils/useDebounce"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
 import { updateLocalStorage } from "../utils/localStorage"
+import { isTheme } from "../utils/isTheme"
 
 namespace ImageCard {
   export interface ImageCardProps {
@@ -90,7 +91,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
   return (
     <div
       onmousedown={_handleMouseDown}
-      className="select-none transition flex flex-col justify-stretch shadow-lg rounded border border-[#3c3c3c] absolute"
+      className="select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#1c1c1c] absolute"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         top: `${item.position.y}px`,
@@ -104,7 +105,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
         backgroundPosition: 'center'
       }}
     >
-      <button className="flex justify-center items-center hover:bg-blue-500 w-5 h-5 text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
+      <button className="flex justify-center items-center hover:bg-blue-500 rounded w-5 h-5 dark:text-[#777] dark:hover:text-white text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
         ImagesSignal.default.removeImage(item.id)
         ImagesSignal.default.images.notify()
         debounceLSUpdate()
@@ -128,7 +129,7 @@ function ExpandIcon({ cb }: {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#333"
+      stroke={isTheme('dark') ? "#777" : "#999"}
       stroke-width="1"
       stroke-linecap="round"
       stroke-linejoin="round"
