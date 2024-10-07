@@ -6,11 +6,12 @@ import { MiniMap } from "./MiniMap"
 import { ImageCard } from "./ImageCard"
 import images from "../signals/images"
 import { CardSelector } from "./cardSelector/CardSelector"
-import { isTheme } from "../utils/isTheme"
 import { Logo } from "./Logo"
+import { useThemeDetector } from "../utils/useThemeDetector"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isDarkTheme = useThemeDetector()
 
   useEffect(() => {
     window.scrollTo({
@@ -51,7 +52,7 @@ export default function InfiniteCanvas() {
             width: `${canvasDimentsion.value.width}px`,
             height: `${canvasDimentsion.value.width}px`,
             backgroundSize: "30px 30px",
-            backgroundImage: `radial-gradient(circle, rgba(${isTheme('dark') ? '255, 255, 255, 0.2' : '0, 0, 0, 0.2'}) 1px, transparent 1px)`,
+            backgroundImage: `radial-gradient(circle, rgba(${isDarkTheme ? '255, 255, 255, 0.2' : '0, 0, 0, 0.2'}) 1px, transparent 1px)`,
           }}>
           {Object.keys(NotesSigal.default.notes.value).map((itemKey: string) => {
             const item = NotesSigal.default.notes.value[itemKey]

@@ -3,7 +3,7 @@ import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
-import { isTheme } from "../utils/isTheme"
+import { useThemeDetector } from "../utils/useThemeDetector"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -134,6 +134,8 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
 function ExpandIcon({ cb }: {
   cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
 }) {
+  const isDarkTheme = useThemeDetector()
+
   return (
     <svg
       onmousedown={cb}
@@ -142,7 +144,7 @@ function ExpandIcon({ cb }: {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke={isTheme('dark') ? "#777" : "#999"}
+      stroke={isDarkTheme ? "#777" : "#999"}
       stroke-width="1"
       stroke-linecap="round"
       stroke-linejoin="round"
