@@ -7,6 +7,7 @@ import { ImageCard } from "./ImageCard"
 import images from "../signals/images"
 import { CardSelector } from "./cardSelector/CardSelector"
 import { isTheme } from "../utils/isTheme"
+import { Logo } from "./Logo"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -36,6 +37,7 @@ export default function InfiniteCanvas() {
 
   return (
     <>
+      <Logo />
       <CardSelector />
       <MiniMap />
 
