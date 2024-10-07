@@ -10,6 +10,8 @@ export function ImportButton() {
   function _handleImport() {
     const input = document.createElement('input')
     input.type = 'file'
+    input.accept = ".json"
+    input.multiple = false
     input.onchange = (e: any) => {
       const file = e.target.files[0]
       const reader = new FileReader()
