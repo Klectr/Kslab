@@ -3,16 +3,6 @@
 version = 3
 
 [[package]]
-name = "KTemplate"
-version = "1.0.0"
-dependencies = [
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1404,6 +1394,16 @@ dependencies = [
  "fluent-uri",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "k-slab"
+version = "1.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
 ]
 
 [[package]]

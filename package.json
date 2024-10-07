@@ -1,6 +1,6 @@
 {
-  "name": "ktemplate",
-  "private": true,
+  "name": "k-slab",
+  "private": false,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
