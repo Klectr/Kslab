@@ -1,0 +1,3 @@
+.TinyMDE {
+  @apply h-full bg-transparent overflow-y-scroll;
+}

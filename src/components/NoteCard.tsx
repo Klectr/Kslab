@@ -1,9 +1,12 @@
-import { signal, useRef } from "kaioken"
+
+import { signal, useEffect, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
 import { useThemeDetector } from "../utils/useThemeDetector"
+import TinyMDE, { Editor } from 'tiny-markdown-editor'
+import { MarkDownEditor } from "./MarkDownEditor/MarkDownEditor"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -21,6 +24,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
   const initialResizeY = useRef(0)
+  const el = useRef<HTMLInputElement>(null)
 
   const { debounce } = useDebounce()
 
@@ -89,7 +93,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   return (
     <div
       onmousedown={() => focusedItem.value = itemKey}
-      className="text-[#333] dark:bg-[#111] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
+      className="overflow-hidden text-[#333] dark:bg-[#111] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         width: `${item.dimensions.w}px`,
@@ -98,7 +102,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
         left: `${item.position.x}px`,
       }}
     >
-      <div className="flex-1 flex flex-col gap-1">
+      <div className="overflow-hidden flex-1 flex flex-col gap-1">
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
           <div style={{
             opacity: saved.value ? '0' : '100'
@@ -110,18 +114,8 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
           }}>x</button>
         </div>
         <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
-        <textarea
-          placeholder={"Todo: put some note here"}
-          className="flex resize-none px-2 w-full h-full bg-transparent resize-none focus:outline-none dark:text-gray-300"
-          value={item.contents}
-          onkeypress={() => { saved.value = false }}
-          onchange={(e) => {
-            NotesSigal.default.updateNoteProperty(itemKey, 'contents', e.target.value)
-            NotesSigal.default.notes.notify()
-            updateLocalStorage()
-            saved.value = true
-          }}
-        />
+
+        <MarkDownEditor initial={item.contents} />
 
         <ExpandIcon cb={_handleResizeMouseDown} />
 
@@ -156,3 +150,4 @@ function ExpandIcon({ cb }: {
     </svg>
   )
 }
+
