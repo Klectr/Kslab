@@ -30,6 +30,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   function updateLocalStorage(time?: number) {
     debounce(() => {
       localStorage.setItem("notes", JSON.stringify(notes.notes.value))
+      saved.value = true
     }, time)
   }
 
@@ -93,37 +94,47 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     NotesSigal.default.updateNoteProperty(itemKey, 'contents', e.content)
     NotesSigal.default.notes.notify()
     updateLocalStorage()
+    saved.value = false
+  }
+
+  function _handleClose(_e: Event) {
+    NotesSigal.default.removeNote(item.id)
+    NotesSigal.default.notes.notify()
+    updateLocalStorage()
+  }
+
+  function _handleFocusCard() {
+    focusedItem.value = itemKey
+  }
+
+  const cardPositionStyle = {
+    zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
+    width: `${item.dimensions.w}px`,
+    height: `${item.dimensions.h}px`,
+    top: `${item.position.y}px`,
+    left: `${item.position.x}px`,
+  }
+
+  const saveIndicatorStyle = {
+    opacity: saved.value ? '0' : '100'
   }
 
   return (
     <div
-      onmousedown={() => focusedItem.value = itemKey}
+      onmousedown={_handleFocusCard}
+      style={cardPositionStyle}
       className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
-      style={{
-        zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
-        width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h}px`,
-        top: `${item.position.y}px`,
-        left: `${item.position.x}px`,
-      }}
     >
       <div className="overflow-hidden flex-1 flex flex-col gap-1">
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
-          <div style={{
-            opacity: saved.value ? '0' : '100'
-          }} className={`rounded-full w-1 h-1 dark:bg-white bg-green-500`}></div>
-          <button className="text-md dark:text-[#777] text-black" onclick={(_e: Event) => {
-            NotesSigal.default.removeNote(item.id)
-            NotesSigal.default.notes.notify()
-            updateLocalStorage()
-          }}>x</button>
+          <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+          <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
         </div>
+
         <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
 
         <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
-
         <ExpandIcon cb={_handleResizeMouseDown} />
-
       </div>
     </div >
 
