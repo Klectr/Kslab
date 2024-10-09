@@ -1,9 +1,12 @@
+
 import { signal, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
 import { useThemeDetector } from "../utils/useThemeDetector"
+import { MarkDownEditor } from "./MarkDownEditor/MarkDownEditor"
+import { ChangeEvent } from "tiny-markdown-editor"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -27,6 +30,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   function updateLocalStorage(time?: number) {
     debounce(() => {
       localStorage.setItem("notes", JSON.stringify(notes.notes.value))
+      saved.value = true
     }, time)
   }
 
@@ -86,45 +90,51 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     window.removeEventListener('mouseup', _handleResizeMouseUp)
   }
 
+  function _handleMdChange(e: ChangeEvent) {
+    NotesSigal.default.updateNoteProperty(itemKey, 'contents', e.content)
+    NotesSigal.default.notes.notify()
+    updateLocalStorage()
+    saved.value = false
+  }
+
+  function _handleClose(_e: Event) {
+    NotesSigal.default.removeNote(item.id)
+    NotesSigal.default.notes.notify()
+    updateLocalStorage()
+  }
+
+  function _handleFocusCard() {
+    focusedItem.value = itemKey
+  }
+
+  const cardPositionStyle = {
+    zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
+    width: `${item.dimensions.w}px`,
+    height: `${item.dimensions.h}px`,
+    top: `${item.position.y}px`,
+    left: `${item.position.x}px`,
+  }
+
+  const saveIndicatorStyle = {
+    opacity: saved.value ? '0' : '100'
+  }
+
   return (
     <div
-      onmousedown={() => focusedItem.value = itemKey}
-      className="text-[#333] dark:bg-[#111] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
-      style={{
-        zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
-        width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h}px`,
-        top: `${item.position.y}px`,
-        left: `${item.position.x}px`,
-      }}
+      onmousedown={_handleFocusCard}
+      style={cardPositionStyle}
+      className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
     >
-      <div className="flex-1 flex flex-col gap-1">
+      <div className="overflow-hidden flex-1 flex flex-col gap-1">
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
-          <div style={{
-            opacity: saved.value ? '0' : '100'
-          }} className={`rounded-full w-1 h-1 dark:bg-white bg-green-500`}></div>
-          <button className="text-md dark:text-[#777] text-black" onclick={(_e: Event) => {
-            NotesSigal.default.removeNote(item.id)
-            NotesSigal.default.notes.notify()
-            updateLocalStorage()
-          }}>x</button>
+          <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+          <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
         </div>
+
         <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
-        <textarea
-          placeholder={"Todo: put some note here"}
-          className="flex resize-none px-2 w-full h-full bg-transparent resize-none focus:outline-none dark:text-gray-300"
-          value={item.contents}
-          onkeypress={() => { saved.value = false }}
-          onchange={(e) => {
-            NotesSigal.default.updateNoteProperty(itemKey, 'contents', e.target.value)
-            NotesSigal.default.notes.notify()
-            updateLocalStorage()
-            saved.value = true
-          }}
-        />
 
+        <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
         <ExpandIcon cb={_handleResizeMouseDown} />
-
       </div>
     </div >
 
@@ -156,3 +166,4 @@ function ExpandIcon({ cb }: {
     </svg>
   )
 }
+

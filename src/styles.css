@@ -13,12 +13,13 @@
   box-sizing: border-box;
 }
 
-*::-webkit-scrollbar {
-  display: none;
-}
-
 html {
   overflow: scroll;
+}
+
+html,
+body {
+  overscroll-behavior-x: none;
 }
 
 :root {
