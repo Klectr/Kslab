@@ -31,7 +31,7 @@
 }
 
 .TMCode {
-  @apply text-blue-800 px-1;
+  @apply text-blue-800 px-1 dark:bg-[#ffffff26] dark:text-blue-200 dark:border-[#545454];
 }
 
 .TMBlockquote {

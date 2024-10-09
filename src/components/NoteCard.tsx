@@ -109,7 +109,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     focusedItem.value = itemKey
   }
 
-  function _handleExportClick(e) {
+  function _handleExportClick(_e: MouseEvent) {
     createFileAndExport("Note", item.contents, "text/markdown")
   }
 
@@ -132,6 +132,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
       className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
     >
       <div className="overflow-hidden flex-1 flex flex-col gap-1">
+        {/* Header Bar */}
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
           <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
 
@@ -140,17 +141,20 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
               onclick={_handleExportClick}
               className="flex items-center">
               <ExportIcon
-                className="cursor-pointer w-4 h-4 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
+                className="dark:text-[#5c5c5c] cursor-pointer w-4 h-4 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
               />
             </div>
+
             <Divider />
+
             <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
 
           </div>
         </div>
 
-        <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
+        <hr className="border dark:border-[#2c2c2c] border-[#ddd]" />
 
+        {/* Content Body */}
         <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
         <ExpandIcon cb={_handleResizeMouseDown} />
       </div>
