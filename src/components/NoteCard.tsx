@@ -1,4 +1,3 @@
-
 import { signal, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
@@ -7,6 +6,9 @@ import { LayerEnum } from "../utils/enums"
 import { useThemeDetector } from "../utils/useThemeDetector"
 import { MarkDownEditor } from "./MarkDownEditor/MarkDownEditor"
 import { ChangeEvent } from "tiny-markdown-editor"
+import { Divider } from "./Divider"
+import { ExportIcon } from "./icons/ExportIcon"
+import { createFileAndExport } from "../utils/createFileAndExport"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -107,6 +109,10 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     focusedItem.value = itemKey
   }
 
+  function _handleExportClick(e) {
+    createFileAndExport("Note", item.contents, "text/markdown")
+  }
+
   const cardPositionStyle = {
     zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
     width: `${item.dimensions.w}px`,
@@ -128,7 +134,19 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
       <div className="overflow-hidden flex-1 flex flex-col gap-1">
         <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
           <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
-          <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
+
+          <div className="flex gap-2">
+            <div
+              onclick={_handleExportClick}
+              className="flex items-center">
+              <ExportIcon
+                className="cursor-pointer w-4 h-4 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
+              />
+            </div>
+            <Divider />
+            <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
+
+          </div>
         </div>
 
         <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />

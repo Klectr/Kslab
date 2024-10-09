@@ -4,6 +4,7 @@ import { ImageCardButton } from "./ImageCardButton"
 import { ExportButton } from "./ExportButton"
 import { TextButton } from "./TextButton"
 import { ImportButton } from "./ImportButton"
+import { Divider } from "../Divider"
 
 export function CardSelector() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -24,16 +25,6 @@ export function CardSelector() {
       <ExportButton />
       <ImportButton />
     </div>
-  )
-}
-
-function Divider() {
-  return (
-    <div style={{
-      margin: '2px 2px',
-      border: "1px solid #9c9c9c",
-      borderRight: 'none',
-    }}></div>
   )
 }
 
