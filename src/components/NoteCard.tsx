@@ -1,12 +1,12 @@
 
-import { signal, useEffect, useRef } from "kaioken"
+import { signal, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
 import { LayerEnum } from "../utils/enums"
 import { useThemeDetector } from "../utils/useThemeDetector"
-import TinyMDE, { Editor } from 'tiny-markdown-editor'
 import { MarkDownEditor } from "./MarkDownEditor/MarkDownEditor"
+import { ChangeEvent } from "tiny-markdown-editor"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -24,7 +24,6 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
   const initialResizeY = useRef(0)
-  const el = useRef<HTMLInputElement>(null)
 
   const { debounce } = useDebounce()
 
@@ -90,10 +89,16 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     window.removeEventListener('mouseup', _handleResizeMouseUp)
   }
 
+  function _handleMdChange(e: ChangeEvent) {
+    NotesSigal.default.updateNoteProperty(itemKey, 'contents', e.content)
+    NotesSigal.default.notes.notify()
+    updateLocalStorage()
+  }
+
   return (
     <div
       onmousedown={() => focusedItem.value = itemKey}
-      className="overflow-hidden text-[#333] dark:bg-[#111] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
+      className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
       style={{
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         width: `${item.dimensions.w}px`,
@@ -115,7 +120,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
         </div>
         <hr className="border dark:border-[#1c1c1c] border-[#ddd]" />
 
-        <MarkDownEditor initial={item.contents} />
+        <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
 
         <ExpandIcon cb={_handleResizeMouseDown} />
 
