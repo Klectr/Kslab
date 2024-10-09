@@ -1,4 +1,5 @@
 import { ImagesSignal, NotesSigal } from "../../signals"
+import { createFileAndExport } from "../../utils/createFileAndExport"
 import { Tooltip } from "./Tooltip"
 import { defaultClassName } from "./utils"
 
@@ -12,17 +13,9 @@ export function ExportButton() {
       ...notes.value,
       ...images.value
     }
-    const date = new Date().toDateString().split(' ').join('_')
-    const name = `Kslab_export_${date}.json`
+    const name = `Kslab_export`
     const jsonData = JSON.stringify(mergeState)
-    const file = new File([jsonData], name, {
-      type: 'text/json'
-    })
-    const url = URL.createObjectURL(file)
-    const a = document.createElement('a')
-    a.download = name
-    a.href = url
-    a.click()
+    createFileAndExport(name, jsonData, "text/json")
   }
 
   return (
