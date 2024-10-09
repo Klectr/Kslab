@@ -98,7 +98,7 @@ export function MiniMap() {
         const newZIndex = LayerEnum.MINIMAP + 1
 
         return (
-          <div className={"absolute dark:bg-gray-500 bg-gray-300 hover:bg-blue-500 cursor-pointer border dark:border-[#222] border-gray-500 rounded"}
+          <div className={"absolute dark:bg-gray-500 bg-gray-300 hover:bg-blue-500 cursor-pointer border dark:border-[#222] border-gray-400 rounded"}
             onclick={_handleItemClick}
             style={{
               width: `${newWidth}px`,
