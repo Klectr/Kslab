@@ -2,7 +2,7 @@ import { signal } from "kaioken"
 import { Card } from "../types"
 import { focusedItem } from "."
 
-export type NoteCardType = Card<"note">
+export type NoteCardType = Card<"notes">
 
 const notes = signal<Record<NoteCardType["id"], NoteCardType>>({})
 

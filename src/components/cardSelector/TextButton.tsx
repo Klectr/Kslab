@@ -8,7 +8,7 @@ export function TextButton() {
 
   function _handleClick(e: MouseEvent) {
     TextSignal.default.addText({
-      type: "text",
+      type: "texts",
       title: "New Note",
       contents: "todo: fill me",
       position: {
@@ -20,12 +20,13 @@ export function TextButton() {
         h: 100
       }
     })
-    updateLocalStorage("text", texts.texts.value)
+    updateLocalStorage("texts", texts.texts.value)
   }
 
   return (
     <Tooltip message="Create a Text Node">
       <svg
+        onclick={_handleClick}
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"

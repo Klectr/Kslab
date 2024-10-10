@@ -18,7 +18,6 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   const offsetX = useRef(0)
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
-  const initialResizeY = useRef(0)
 
   const { debounce } = useDebounce()
 
@@ -49,6 +48,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   function _handleMouseDown(e: MouseEvent) {
     e.preventDefault()
+    focusedItem.value = itemKey
     offsetX.current = e.offsetX
     offsetY.current = e.offsetY
     pressed.value = true
@@ -57,12 +57,11 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   }
 
   function _handleResizeMove(e: MouseEvent) {
-    const { pageX, pageY } = e
-    const [newX, newY] = [initialResizeX.current - pageX, initialResizeY.current - pageY]
+    const { pageX } = e
+    const newX = initialResizeX.current - pageX
 
     const newW = -newX + item.dimensions.w
-    const newH = -newY + item.dimensions.h
-    const newDim = { w: newW, h: newH }
+    const newDim = { w: newW, h: 0 }
 
     TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDim)
     TextSignal.default.texts.notify()
@@ -71,7 +70,6 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   function _handleResizeMouseDown(e: MouseEvent) {
     initialResizeX.current = e.pageX
-    initialResizeY.current = e.pageY
     pressed.value = true
     window.addEventListener('mousemove', _handleResizeMove)
     window.addEventListener('mouseup', _handleResizeMouseUp)
@@ -87,18 +85,37 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   return (
     <div
       onmousedown={_handleMouseDown}
-      className="select-none transition flex flex-col justify-stretch rounded border border-[#3c3c3c] absolute border-dashed"
+      className="px-4 select-none transition flex flex-col justify-stretch rounded absolute"
       style={{
+        outline: `${focusedItem.value === item.id ? '1px solid' : ''}`,
+        fontSize: `${item.dimensions.w / 6}px`,
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
-        width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h + 100}px`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
       }}
     >
-      <div className={'relative w-full h-full'}>
-        <p className={'w-full h-full'}>{item.contents}</p>
+      <div className={'relative'}>
+        {item.contents}
       </div>
+
+      <svg
+        onclick={_handleResizeMouseDown}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        className="h-4 w-4 absolute right-[-4px] bottom-[-4px] cursor-se-resize"
+        style={{
+          display: focusedItem.value === item.id ? 'unset' : 'none'
+        }}
+      >
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+      </svg>
     </div >
 
   )

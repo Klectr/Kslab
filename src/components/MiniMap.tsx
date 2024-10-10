@@ -3,7 +3,7 @@ import notes, { NoteCardType } from "../signals/notes"
 import { canvasDimentsion } from "../signals"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
-import texts from "../signals/texts"
+import texts, { TextCardType } from "../signals/texts"
 
 const _MAP_OFFSET = 20
 const _MAP_SCALE_FACTOR = 10
@@ -112,7 +112,7 @@ export function MiniMap() {
         )
       })}
 
-      {Object.keys(texts.texts.value).map((textKey: textCardType['id']) => {
+      {Object.keys(texts.texts.value).map((textKey: TextCardType['id']) => {
         const text = texts.texts.value[textKey]
         const el = useRef(null)
 
@@ -129,12 +129,11 @@ export function MiniMap() {
             onclick={_handleItemClick}
             style={{
               position: 'absolute',
-              width: `${text.dimensions.w / _MAP_SCALE_FACTOR}px`,
-              height: `${text.dimensions.h / _MAP_SCALE_FACTOR}px`,
+              width: `${300 / _MAP_SCALE_FACTOR}px`,
+              height: `${100 / _MAP_SCALE_FACTOR}px`,
               top: `${(text.position.y / _MAP_SCALE_FACTOR)}px`,
               left: `${(text.position.x / _MAP_SCALE_FACTOR)}px`,
               border: '1px solid #222',
-              borderRadius: '2px',
               zIndex: `${LayerEnum.MINIMAP + 1}`
             }}
           ></div>
