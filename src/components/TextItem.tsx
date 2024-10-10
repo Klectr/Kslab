@@ -3,7 +3,6 @@ import { TextSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
 import { LayerEnum } from "../utils/enums"
-import { isTheme } from "../utils/isTheme"
 
 namespace TextItem {
   export interface TextCardProps {
@@ -13,7 +12,6 @@ namespace TextItem {
 }
 
 export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
-  const saved = signal(true)
   const pressed = signal(false)
   const newX = useRef(0)
   const newY = useRef(0)
