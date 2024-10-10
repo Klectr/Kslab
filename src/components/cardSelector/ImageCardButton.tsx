@@ -1,10 +1,12 @@
 import { ImagesSignal } from "../../signals"
 import images from "../../signals/images"
 import { updateLocalStorage } from "../../utils/localStorage"
+import { useToast } from "../Toast"
 import { Tooltip } from "./Tooltip"
 import { defaultClassName } from "./utils"
 
 export function ImageCardButton() {
+  const toast = useToast()
   function _handleClick(mouseEvent: MouseEvent) {
     const input = document.createElement('input')
     input.type = 'file'
@@ -30,7 +32,7 @@ export function ImageCardButton() {
           if (typeof content == 'string') img = content?.split(':')[1]
           if (!img) return
 
-          ImagesSignal.default.addImage({
+          const imgId = ImagesSignal.default.addImage({
             type: "image",
             title: "New Image",
             contents: content as string,
@@ -43,7 +45,16 @@ export function ImageCardButton() {
               h: normalizedH
             }
           })
-          updateLocalStorage("images", images.images.value)
+
+          try {
+            updateLocalStorage("images", images.images.value)
+          } catch (e: unknown) {
+            if (e instanceof DOMException) {
+              if (e.name !== 'QuotaExceededError') return
+              toast.showToast("error", "Could not add such a girthy image!")
+              ImagesSignal.default.removeImage(imgId)
+            }
+          }
         }
         image.src = readerEvent.target?.result as string
       }

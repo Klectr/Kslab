@@ -1,8 +1,13 @@
 import InfiniteCanvas from "./components/InfinateCanvas"
+import { ToastContextProvider } from "./components/Toast"
 import { useThemeDetector } from "./utils/useThemeDetector"
 
 export function App() {
   useThemeDetector()
 
-  return <InfiniteCanvas />
+  return (
+    <ToastContextProvider>
+      <InfiniteCanvas />
+    </ToastContextProvider>
+  )
 }

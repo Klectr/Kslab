@@ -18,6 +18,7 @@ function addImage(data: Omit<ImageCardType, "id">) {
   images.value[newCard.id] = newCard
   images.notify()
   focusedItem.value = newCard.id
+  return newCard.id
 }
 
 function removeImage(id: ImageCardType["id"]) {

@@ -35,3 +35,29 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.toast {
+  @apply flex flex-col items-center justify-center;
+  @apply fixed right-4 top-4 w-52 px-4;
+  @apply transition-all duration-300 rounded z-50;
+}
+
+.toast-message {
+  color: #e5e5e5;
+}
+
+.toast.toast-info {
+  @apply bg-info;
+}
+
+.toast.toast-success {
+  @apply bg-success;
+}
+
+.toast.toast-warning {
+  @apply bg-warning;
+}
+
+.toast.toast-error {
+  @apply bg-error;
+}

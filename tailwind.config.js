@@ -4,10 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "rgb(64 37 121)",
-        "primary-light": "rgb(195 177 232)",
+        info: "#4f46e5",
+        success: "#267d46",
+        warning: "#a46319",
+        error: "#963030",
       },
     },
   },
   plugins: [],
-};
+}
