@@ -14,25 +14,32 @@ export default function InfiniteCanvas() {
   const isDarkTheme = useThemeDetector()
 
   useEffect(() => {
-    window.scrollTo({
-      left: (canvasDimentsion.value.width / 2) - (window.innerWidth / 2),
-      top: (canvasDimentsion.value.height / 2) - (window.innerHeight / 2)
-    })
+    const initPos = getInitialPosition(canvasDimentsion)
+    window.scrollTo(initPos)
 
-    const updateDimensions = () => {
+    const _updateDimensions = () => {
       canvasDimentsion.value = {
         width: Math.max(canvasDimentsion.value.width, window.innerWidth),
         height: Math.max(canvasDimentsion.value.height, window.innerHeight),
       }
     }
 
-    updateDimensions()
-    window.addEventListener("resize", updateDimensions)
+    function _updatePosition() {
+      localStorage.setItem("pos", JSON.stringify({
+        left: window.scrollX,
+        top: window.scrollY
+      }))
+    }
+
+    _updateDimensions()
+    window.addEventListener("resize", _updateDimensions)
+    window.addEventListener("scrollend", _updatePosition)
     notes.loadLocalStorage()
     images.loadLocalStorage()
 
     return () => {
-      window.removeEventListener("resize", updateDimensions)
+      window.removeEventListener("resize", _updateDimensions)
+      window.removeEventListener("scrollend", _updatePosition)
     }
   }, [])
 
@@ -72,3 +79,32 @@ export default function InfiniteCanvas() {
     </>
   )
 }
+
+interface ScrollToOptions extends ScrollOptions {
+  left?: number;
+  top?: number;
+}
+
+function getInitialPosition(canvasDimensions: typeof canvasDimentsion): ScrollToOptions {
+  const defaultScroll: ScrollToOptions = {
+    left: (canvasDimensions.value.width / 2) - (window.innerWidth / 2),
+    top: (canvasDimensions.value.height / 2) - (window.innerHeight / 2)
+  }
+
+  let initPosition;
+  try {
+    initPosition = JSON.parse(localStorage.getItem("pos") ?? "")
+  } catch (e) {
+    console.error("no local storage for pos")
+  }
+
+  if (!initPosition) return defaultScroll
+  return initPosition
+}
+
+
+
+
+
+
+
