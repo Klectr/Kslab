@@ -125,7 +125,7 @@ export function MiniMap() {
         }
 
         return (
-          <div ref={el} className={"bg-indigo-500 hover:bg-blue-500 cursor-pointer"}
+          <div ref={el} className={"bg-indigo-500 hover:bg-blue-500 cursor-pointer rounded"}
             onclick={_handleItemClick}
             style={{
               position: 'absolute',
