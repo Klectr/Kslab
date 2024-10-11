@@ -4,6 +4,7 @@ import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
 import { LayerEnum } from "../utils/enums"
 import { Card } from "../types"
+import { useThemeDetector } from "../utils/useThemeDetector"
 
 namespace TextItem {
   export interface TextCardProps {
@@ -92,6 +93,12 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
     updateLocalStorage()
   }
 
+  function _handleClose(e: MouseEvent) {
+    e.stopPropagation()
+    TextSignal.default.removeText(item.id)
+    TextSignal.default.texts.notify()
+  }
+
   return (
     <div
       ref={elRef}
@@ -111,17 +118,54 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
 
 
+      <CloseIcon cb={_handleClose} item={item} />
       <ExpandIcon cb={_handleResizeMouseDown} item={item} />
     </div >
 
   )
 }
 
-function ExpandIcon({ cb, item }: {
-  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
-  item: TextSignal.TextCardType
-}) {
+namespace CloseIcon {
+  export interface Props {
+    cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
+    item: TextSignal.TextCardType
+  }
+}
+function CloseIcon({ item, cb }: CloseIcon.Props) {
+  const isDark = useThemeDetector()
+  return (
+    <svg
+      onclick={cb}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill={isDark ? 'black' : 'white'}
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="cursor-pointer w-4 h-4 absolute top-[-8px] right-[-8px]"
+      style={{
+        display: focusedItem.value === item.id ? 'unset' : 'none'
+      }}
 
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="m15 9-6 6" />
+      <path d="m9 9 6 6" />
+    </svg>
+  )
+}
+
+namespace ExpandIcon {
+  export interface Props {
+    cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
+    item: TextSignal.TextCardType
+  }
+}
+function ExpandIcon({ cb, item }: ExpandIcon.Props) {
+  const isDark = useThemeDetector()
   return (
     <svg
       onmousedown={cb}
@@ -129,7 +173,7 @@ function ExpandIcon({ cb, item }: {
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill={isDark ? 'black' : 'white'}
       stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"

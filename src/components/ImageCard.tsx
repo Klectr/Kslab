@@ -91,7 +91,6 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
   function _handleClose(_e: Event) {
     ImagesSignal.default.removeImage(item.id)
     ImagesSignal.default.images.notify()
-    debounceLSUpdate()
   }
 
   return (
