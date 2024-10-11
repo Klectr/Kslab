@@ -129,7 +129,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     <div
       onmousedown={_handleFocusCard}
       style={cardPositionStyle}
-      className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#eee] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
+      className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#efeff0] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
     >
       <div className="overflow-hidden flex-1 flex flex-col gap-1">
         {/* Header Bar */}

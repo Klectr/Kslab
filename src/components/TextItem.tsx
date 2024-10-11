@@ -94,7 +94,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
         left: `${item.position.x}px`,
       }}
     >
-      <div className={'relative'}>
+      <div className={'drop-shadow relative'}>
         {item.contents}
       </div>
 
