@@ -8,7 +8,7 @@ export function TextButton() {
 
   function _handleClick(e: MouseEvent) {
     TextSignal.default.addText({
-      fontSize: 10,
+      fontSize: 84,
       type: "texts",
       title: "New Note",
       contents: "todo: fill me",
