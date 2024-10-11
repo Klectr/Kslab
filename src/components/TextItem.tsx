@@ -47,8 +47,9 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   }
 
   function _handleMouseDown(e: MouseEvent) {
-    e.preventDefault()
     focusedItem.value = itemKey
+    e.preventDefault()
+    e.stopPropagation()
     offsetX.current = e.offsetX
     offsetY.current = e.offsetY
     pressed.value = true
@@ -69,23 +70,24 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
 
   function _handleResizeMouseDown(e: MouseEvent) {
+    e.stopPropagation()
     initialResizeX.current = e.pageX
     pressed.value = true
     window.addEventListener('mousemove', _handleResizeMove)
     window.addEventListener('mouseup', _handleResizeMouseUp)
   }
 
-  function _handleResizeMouseUp() {
+  function _handleResizeMouseUp(_e: MouseEvent) {
     pressed.value = false
-    updateLocalStorage()
     window.removeEventListener('mousemove', _handleResizeMove)
     window.removeEventListener('mouseup', _handleResizeMouseUp)
+    updateLocalStorage()
   }
 
   return (
     <div
       onmousedown={_handleMouseDown}
-      className="px-4 select-none transition flex flex-col justify-stretch rounded absolute"
+      className="px-4  transition flex flex-col justify-stretch rounded absolute"
       style={{
         outline: `${focusedItem.value === item.id ? '1px solid' : ''}`,
         fontSize: `${item.dimensions.w / 6}px`,
@@ -94,30 +96,41 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
         left: `${item.position.x}px`,
       }}
     >
-      <div className={'drop-shadow relative'}>
+      <div className={'select-none drop-shadow relative'}>
         {item.contents}
       </div>
 
-      <svg
-        onclick={_handleResizeMouseDown}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        className="h-4 w-4 absolute right-[-4px] bottom-[-4px] cursor-se-resize"
-        style={{
-          display: focusedItem.value === item.id ? 'unset' : 'none'
-        }}
-      >
-        <rect width="18" height="18" x="3" y="3" rx="2" />
-      </svg>
+
+
+      <ExpandIcon cb={_handleResizeMouseDown} item={item} />
     </div >
 
   )
 }
 
+function ExpandIcon({ cb, item }: {
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
+  item: TextSignal.TextCardType
+}) {
+
+  return (
+    <svg
+      onmousedown={cb}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="h-4 w-4 absolute right-[-6px] bottom-[-6px] cursor-se-resize"
+      style={{
+        display: focusedItem.value === item.id ? 'unset' : 'none'
+      }}
+    >
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+    </svg>
+  )
+}

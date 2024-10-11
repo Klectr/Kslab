@@ -88,6 +88,12 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
     window.removeEventListener('mouseup', _handleResizeMouseUp)
   }
 
+  function _handleClose(_e: Event) {
+    ImagesSignal.default.removeImage(item.id)
+    ImagesSignal.default.images.notify()
+    debounceLSUpdate()
+  }
+
   return (
     <div
       onmousedown={_handleMouseDown}
@@ -105,11 +111,9 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
         backgroundPosition: 'center'
       }}
     >
-      <button className="flex justify-center items-center hover:bg-blue-500 rounded w-5 h-5 dark:text-[#777] dark:hover:text-white text-white text-md absolute right-0 top-0" onclick={(_e: Event) => {
-        ImagesSignal.default.removeImage(item.id)
-        ImagesSignal.default.images.notify()
-        debounceLSUpdate()
-      }}>x</button>
+      <button
+        className="flex justify-center items-center hover:bg-blue-500 rounded w-5 h-5 dark:text-[#777] dark:hover:text-white text-white text-md absolute right-0 top-0"
+        onclick={_handleClose}>x</button>
 
       <ExpandIcon cb={_handleResizeMouseDown} />
     </div >
