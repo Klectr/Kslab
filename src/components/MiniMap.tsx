@@ -129,8 +129,8 @@ export function MiniMap() {
             onclick={_handleItemClick}
             style={{
               position: 'absolute',
-              width: `${300 / _MAP_SCALE_FACTOR}px`,
-              height: `${100 / _MAP_SCALE_FACTOR}px`,
+              width: `${text.dimensions.w / _MAP_SCALE_FACTOR}px`,
+              height: `${text.dimensions.h / _MAP_SCALE_FACTOR}px`,
               top: `${(text.position.y / _MAP_SCALE_FACTOR)}px`,
               left: `${(text.position.x / _MAP_SCALE_FACTOR)}px`,
               border: '1px solid #222',

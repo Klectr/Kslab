@@ -2,7 +2,9 @@ import { signal } from "kaioken"
 import { Card } from "../types"
 import { focusedItem } from "."
 
-export type TextCardType = Card<"texts">
+export type TextCardType = Card<"texts"> & {
+  fontSize: number
+}
 
 const texts = signal<Record<TextCardType["id"], TextCardType>>({})
 

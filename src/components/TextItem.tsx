@@ -1,8 +1,9 @@
-import { signal, useRef } from "kaioken"
+import { signal, useEffect, useRef } from "kaioken"
 import { TextSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
 import { LayerEnum } from "../utils/enums"
+import { Card } from "../types"
 
 namespace TextItem {
   export interface TextCardProps {
@@ -18,6 +19,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   const offsetX = useRef(0)
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
+  const elRef = useRef<HTMLDivElement>(null)
 
   const { debounce } = useDebounce()
 
@@ -60,14 +62,20 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   function _handleResizeMove(e: MouseEvent) {
     const { pageX } = e
     const newX = initialResizeX.current - pageX
+    const newFontSize = Math.floor(-newX + item.fontSize)
 
-    const newW = -newX + item.dimensions.w
-    const newDim = { w: newW, h: 0 }
-
-    TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDim)
+    TextSignal.default.updateTextProperty(itemKey, 'fontSize', newFontSize)
     TextSignal.default.texts.notify()
   }
 
+  useEffect(() => {
+    const elDems = elRef.current?.getBoundingClientRect()
+    const elW = elDems?.width ?? 100
+    const elH = elDems?.height ?? 100
+    const newDems: Card<'texts'>['dimensions'] = { w: elW, h: elH }
+    TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDems)
+    TextSignal.default.texts.notify()
+  }, [elRef.current, item.fontSize])
 
   function _handleResizeMouseDown(e: MouseEvent) {
     e.stopPropagation()
@@ -86,11 +94,12 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   return (
     <div
+      ref={elRef}
       onmousedown={_handleMouseDown}
       className="px-4  transition flex flex-col justify-stretch rounded absolute"
       style={{
         outline: `${focusedItem.value === item.id ? '1px solid' : ''}`,
-        fontSize: `${item.dimensions.w / 6}px`,
+        fontSize: `${item.fontSize / 6}px`,
         zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
