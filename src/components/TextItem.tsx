@@ -101,8 +101,9 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   }
 
   function _handleContentInput(e: InputEvent) {
-    console.log("event: ", e)
-    texts.updateTextProperty(itemKey, 'contents', (e.target as any).textContent)
+    const el = e.target as HTMLParagraphElement & Pick<HTMLInputElement, 'oninput'>
+    const val = el.innerHTML.split('<br>').join('\n')
+    texts.updateTextProperty(itemKey, 'contents', val)
     updateLocalStorage()
   }
 
@@ -111,25 +112,57 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
     pRef.current.textContent = item.contents
   }, [])
 
+  useEffect(() => {
+    function _handleClick(e: MouseEvent) {
+      const target = e.target as HTMLElement
+
+      if (target === elRef.current) return
+      if (elRef.current?.contains(target)) return
+
+      const classes = '.text-container, .text-p, .text-pre, .text-close'
+      if (target.closest(classes)) return
+      if (target.matches(classes)) return
+
+      focusedItem.value = null
+      document.removeEventListener('mousedown', _handleClick)
+    }
+
+    if (focusedItem.value !== itemKey) return
+    document.addEventListener('mousedown', _handleClick)
+    return () => {
+      document.removeEventListener('mousedown', _handleClick)
+    }
+  }, [focusedItem.value])
+
+  const outline = `${focusedItem.value === item.id ? '1px solid' : ''}`
+  const fontSize = `${item.fontSize / 6}px`
+  const zIndex = `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`
+
   return (
     <div
       ref={elRef}
       onmousedown={_handleMouseDown}
-      className="transition flex flex-col justify-stretch rounded absolute"
+      className="text-container transition flex flex-col justify-stretch rounded absolute"
       style={{
-        outline: `${focusedItem.value === item.id ? '1px solid' : ''}`,
-        fontSize: `${item.fontSize / 6}px`,
-        zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
+        outline: outline,
+        fontSize: fontSize,
+        zIndex: zIndex,
         top: `${item.position.y}px`,
         left: `${item.position.x}px`,
+        userSelect: focusedItem.value === itemKey ? 'text' : 'none',
       }}
     >
-      <div className={'px-2 w-full select-none drop-shadow relative'}>
+      <pre
+        className={'text-pre px-2 w-full select-none drop-shadow relative'}
+      >
         <p
           ref={pRef}
-
-          oninput={_handleContentInput} contentEditable className={'inline-block px-2 w-full select-none drop-shadow relative'}></p>
-      </div>
+          //@ts-expect-error
+          oninput={_handleContentInput}
+          contentEditable
+          className={'text-p inline-block px-2 w-full select-none drop-shadow relative'}>
+        </p>
+      </pre>
 
       <CloseIcon cb={_handleClose} item={item} />
       <ExpandIcon cb={_handleResizeMouseDown} item={item} />
@@ -158,7 +191,7 @@ function CloseIcon({ item, cb }: CloseIcon.Props) {
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      className="cursor-pointer w-4 h-4 absolute top-[-8px] right-[-8px]"
+      className="text-close cursor-pointer w-4 h-4 absolute top-[-8px] right-[-8px]"
       style={{
         display: focusedItem.value === item.id ? 'unset' : 'none'
       }}
