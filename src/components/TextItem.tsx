@@ -1,4 +1,4 @@
-import { signal, useEffect, useRef } from "kaioken"
+import { signal, useEffect, useLayoutEffect, useRef } from "kaioken"
 import { TextSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
@@ -14,6 +14,7 @@ namespace TextItem {
 }
 
 export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
+  const { debounce } = useDebounce()
   const pressed = signal(false)
   const newX = useRef(0)
   const newY = useRef(0)
@@ -21,8 +22,18 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
   const elRef = useRef<HTMLDivElement>(null)
+  const pRef = useRef<HTMLParagraphElement>(null)
 
-  const { debounce } = useDebounce()
+  useEffect(() => {
+    const elDems = elRef.current?.getBoundingClientRect()
+    const elW = elDems?.width ?? 100
+    const elH = elDems?.height ?? 100
+    const newDems: Card<'texts'>['dimensions'] = { w: elW, h: elH }
+    TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDems)
+    TextSignal.default.texts.notify()
+  }, [elRef.current, item.fontSize])
+
+
 
   function updateLocalStorage(time?: number) {
     debounce(() => {
@@ -51,8 +62,6 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   function _handleMouseDown(e: MouseEvent) {
     focusedItem.value = itemKey
-    e.preventDefault()
-    e.stopPropagation()
     offsetX.current = e.offsetX
     offsetY.current = e.offsetY
     pressed.value = true
@@ -67,16 +76,8 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
     TextSignal.default.updateTextProperty(itemKey, 'fontSize', newFontSize)
     TextSignal.default.texts.notify()
+    updateLocalStorage()
   }
-
-  useEffect(() => {
-    const elDems = elRef.current?.getBoundingClientRect()
-    const elW = elDems?.width ?? 100
-    const elH = elDems?.height ?? 100
-    const newDems: Card<'texts'>['dimensions'] = { w: elW, h: elH }
-    TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDems)
-    TextSignal.default.texts.notify()
-  }, [elRef.current, item.fontSize])
 
   function _handleResizeMouseDown(e: MouseEvent) {
     e.stopPropagation()
@@ -99,11 +100,22 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
     TextSignal.default.texts.notify()
   }
 
+  function _handleContentInput(e: InputEvent) {
+    console.log("event: ", e)
+    texts.updateTextProperty(itemKey, 'contents', (e.target as any).textContent)
+    updateLocalStorage()
+  }
+
+  useLayoutEffect(() => {
+    if (!pRef.current) return
+    pRef.current.textContent = item.contents
+  }, [])
+
   return (
     <div
       ref={elRef}
       onmousedown={_handleMouseDown}
-      className="px-4  transition flex flex-col justify-stretch rounded absolute"
+      className="transition flex flex-col justify-stretch rounded absolute"
       style={{
         outline: `${focusedItem.value === item.id ? '1px solid' : ''}`,
         fontSize: `${item.fontSize / 6}px`,
@@ -112,11 +124,12 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
         left: `${item.position.x}px`,
       }}
     >
-      <div className={'select-none drop-shadow relative'}>
-        {item.contents}
+      <div className={'px-2 w-full select-none drop-shadow relative'}>
+        <p
+          ref={pRef}
+
+          oninput={_handleContentInput} contentEditable className={'inline-block px-2 w-full select-none drop-shadow relative'}></p>
       </div>
-
-
 
       <CloseIcon cb={_handleClose} item={item} />
       <ExpandIcon cb={_handleResizeMouseDown} item={item} />
