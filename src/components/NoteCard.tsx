@@ -1,4 +1,4 @@
-import { signal, useRef } from "kaioken"
+import { signal, useCallback, useEffect, useRef } from "kaioken"
 import { NotesSigal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import notes, { NoteCardType } from "../signals/notes"
@@ -111,8 +111,12 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     focusedItem.value = itemKey
   }
 
-  function _handleExportClick(_e: MouseEvent) {
+  function _exportFile() {
     createFileAndExport("Note", item.contents, "text/markdown")
+  }
+
+  function _handleExportClick(_e: MouseEvent) {
+    _exportFile()
   }
 
   function _handleMouseClick(e: MouseEvent) {
@@ -123,6 +127,39 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   function _handleContextClose() {
     openContextMenu.value = false
   }
+
+  const _handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!e.ctrlKey) return
+
+    // TODO: add support for other os
+    // TODO: add modal popup 
+
+    switch (e.key) {
+      case 'Delete':
+        e.preventDefault()
+        _handleClose(e)
+        break
+      case 'Backspace':
+        e.preventDefault()
+        _handleClose(e)
+        break
+      case 'e':
+        e.preventDefault()
+        _exportFile()
+        break
+      default:
+        break
+    }
+  }, [itemKey, item.position, NotesSigal.default])
+
+  useEffect(() => {
+    if (focusedItem.value !== itemKey) return
+    window.addEventListener('keydown', _handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', _handleKeyDown)
+    }
+
+  }, [focusedItem.value, itemKey])
 
   const cardPositionStyle = {
     zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
@@ -198,7 +235,6 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
         </div>
       </ContextMenuPortal>
     </div >
-
   )
 }
 
@@ -227,4 +263,5 @@ function ExpandIcon({ cb }: {
     </svg>
   )
 }
+
 
