@@ -3,6 +3,7 @@ import notes, { NoteCardType } from "../signals/notes"
 import { canvasDimentsion } from "../signals"
 import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
+import texts, { TextCardType } from "../signals/texts"
 
 const _MAP_OFFSET = 20
 const _MAP_SCALE_FACTOR = 10
@@ -106,6 +107,34 @@ export function MiniMap() {
               top: `${newTop}px`,
               left: `${newLeft}px`,
               zIndex: `${newZIndex}`
+            }}
+          ></div>
+        )
+      })}
+
+      {Object.keys(texts.texts.value).map((textKey: TextCardType['id']) => {
+        const text = texts.texts.value[textKey]
+        const el = useRef(null)
+
+        function _handleItemClick(_e: MouseEvent) {
+          window.scrollTo({
+            left: text.position.x - ((viewportWidth / 2) - (text.dimensions.w / 2)),
+            top: text.position.y - ((viewportHeight / 2) - (text.dimensions.h / 2)),
+            behavior: 'smooth'
+          })
+        }
+
+        return (
+          <div ref={el} className={"bg-indigo-500 hover:bg-blue-500 cursor-pointer rounded"}
+            onclick={_handleItemClick}
+            style={{
+              position: 'absolute',
+              width: `${text.dimensions.w / _MAP_SCALE_FACTOR}px`,
+              height: `${text.dimensions.h / _MAP_SCALE_FACTOR}px`,
+              top: `${(text.position.y / _MAP_SCALE_FACTOR)}px`,
+              left: `${(text.position.x / _MAP_SCALE_FACTOR)}px`,
+              border: '1px solid #222',
+              zIndex: `${LayerEnum.MINIMAP + 1}`
             }}
           ></div>
         )

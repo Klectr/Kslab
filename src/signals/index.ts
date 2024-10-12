@@ -6,3 +6,4 @@ export const canvasDimentsion = signal({ width: 3000, height: 3000 })
 
 export * as NotesSigal from "./notes"
 export * as ImagesSignal from "./images"
+export * as TextSignal from "./texts"

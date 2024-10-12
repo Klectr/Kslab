@@ -1,11 +1,33 @@
 import { Tooltip } from "./Tooltip";
+import { TextSignal } from "../../signals";
+import texts from "../../signals/texts";
+import { updateLocalStorage } from "../../utils/localStorage";
 import { defaultClassName } from "./utils";
 
 export function TextButton() {
 
+  function _handleClick(e: MouseEvent) {
+    TextSignal.default.addText({
+      fontSize: 84,
+      type: "texts",
+      title: "New Note",
+      contents: "todo: fill me",
+      position: {
+        x: e.pageX - 100,
+        y: e.pageY + (window.innerHeight / 2) - 100
+      },
+      dimensions: {
+        w: 200,
+        h: 100
+      }
+    })
+    updateLocalStorage("texts", texts.texts.value)
+  }
+
   return (
     <Tooltip message="Create a Text Node">
       <svg
+        onclick={_handleClick}
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"

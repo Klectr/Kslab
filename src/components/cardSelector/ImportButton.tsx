@@ -21,15 +21,15 @@ export function ImportButton() {
         let content = readerEvent.target?.result;
         // get only the base64 parts and not any identifiers
         content = (content as string).split(',')[1]
-        const data: Record<string, Card<'note'> | Card<'image'>> = convertBase64ToJson(content)
+        const data: Record<string, Card<'notes'> | Card<'images'>> = convertBase64ToJson(content)
         for (let key in data) {
           const item = data[key]
-          if (item.type == 'image') {
+          if (item.type == 'images') {
             const { id, ...rest } = item
             images.addImage(rest)
           }
 
-          if (item.type == 'note') {
+          if (item.type == 'notes') {
             const { id, ...rest } = item
             notes.addNote(rest)
           }
