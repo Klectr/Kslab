@@ -8,7 +8,6 @@ import images from "../signals/images"
 import { CardSelector } from "./cardSelector/CardSelector"
 import { Logo } from "./Logo"
 import { useThemeDetector } from "../utils/useThemeDetector"
-import { isTheme } from "../utils/isTheme"
 import { TextItem } from "./TextItem"
 import texts from "../signals/texts"
 
