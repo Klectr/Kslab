@@ -5,6 +5,7 @@ import { LayerEnum } from "../utils/enums"
 import images, { ImageCardType } from "../signals/images"
 import { updateLocalStorage } from "../utils/localStorage"
 import { useThemeDetector } from "../utils/useThemeDetector"
+import { ContextMenuPortal } from "./ContextMenuPortal"
 
 namespace ImageCard {
   export interface ImageCardProps {
@@ -22,6 +23,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
   const offsetY = useRef(0)
   const initialResizeX = useRef(0)
   const initialResizeY = useRef(0)
+  const openContextMenu = signal(false)
 
   function debounceLSUpdate(time?: number) {
     debounce(() => {
@@ -93,29 +95,65 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
     ImagesSignal.default.images.notify()
   }
 
-  return (
-    <div
-      onmousedown={_handleMouseDown}
-      className="select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#1c1c1c] absolute"
-      style={{
-        zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
-        top: `${item.position.y}px`,
-        left: `${item.position.x}px`,
-        width: `${item.dimensions.w}px`,
-        height: `${item.dimensions.h}px`,
-        backgroundColor: '#181818',
-        backgroundImage: `url(${item.contents})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
-      <button
-        className="flex justify-center items-center hover:bg-blue-500 rounded w-5 h-5 dark:text-[#777] dark:hover:text-white text-white text-md absolute right-0 top-0"
-        onclick={_handleClose}>x</button>
+  function _handleMouseClick(e: MouseEvent) {
+    e.preventDefault()
+    openContextMenu.value = !openContextMenu.value
+  }
 
-      <ExpandIcon cb={_handleResizeMouseDown} />
-    </div >
+  function _handleContextClose() {
+    openContextMenu.value = false
+  }
+
+  return (
+    <>
+      <div
+        oncontextmenu={_handleMouseClick}
+        onmousedown={_handleMouseDown}
+        className="select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#1c1c1c] absolute"
+        style={{
+          zIndex: `${focusedItem.value == itemKey ? LayerEnum.CARD_ELEVATED : LayerEnum.CARD}`,
+          top: `${item.position.y}px`,
+          left: `${item.position.x}px`,
+          width: `${item.dimensions.w}px`,
+          height: `${item.dimensions.h}px`,
+          backgroundColor: '#181818',
+          backgroundImage: `url(${item.contents})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <button
+          className="flex justify-center items-center hover:bg-blue-500 rounded w-5 h-5 dark:text-[#777] dark:hover:text-white text-white text-md absolute right-0 top-0"
+          onclick={_handleClose}>x</button>
+
+        <ExpandIcon cb={_handleResizeMouseDown} />
+      </div >
+
+      <ContextMenuPortal open={openContextMenu.value} closeAction={_handleContextClose}>
+        <div className="bg-[#3c3c3c] flex flex-col rounded">
+          <div className="flex justify-between items-center">
+            <div className="text-md dark:text-[#999] text-black px-2 py-1">
+              {item.title}
+            </div>
+          </div>
+
+          <hr className="border dark:border-[#2c2c2c] border-[#ddd] m-0 p-0" />
+
+          <div>
+            <ul>
+              <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
+                <button onclick={_handleClose} className="text-md dark:text-[#999]  text-black">
+                  Delete
+                </button>
+              </li>
+              <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ContextMenuPortal>
+    </>
 
   )
 }

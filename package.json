@@ -11,6 +11,7 @@
     "commit": "cz"
   },
   "dependencies": {
+    "@kaioken-core/hooks": "^0.0.8",
     "@tauri-apps/api": "^1",
     "caniuse-lite": "^1.0.30001667",
     "kaioken": "^0.32.1",
