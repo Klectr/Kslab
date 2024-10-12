@@ -9,6 +9,7 @@ export function App() {
   return (
     <ToastContextProvider>
       <MemoInfyCanvas />
+      <div id="context-menu-portal" />
     </ToastContextProvider>
   )
 }
