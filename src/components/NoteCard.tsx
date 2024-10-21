@@ -249,9 +249,10 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
         </ContextMenuPortal>
       </div >
 
+      {/* HOTKEY PAPER */}
       {showHelp.value &&
         <div
-          className={"text-white absolute bg-[#1c1c1c] rounded-md p-1"}
+          className={"text-white absolute bg-[#1c1c1c] rounded-md p-1 z-[1000] border border-blue-500"}
           style={{
             top: `${item.position.y}px`,
             left: `${item.position.x - 120}px`
