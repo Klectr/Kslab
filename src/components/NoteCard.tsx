@@ -10,6 +10,7 @@ import { Divider } from "./Divider"
 import { ExportIcon } from "./icons/ExportIcon"
 import { createFileAndExport } from "../utils/createFileAndExport"
 import { ContextMenuPortal } from "./ContextMenuPortal"
+import { HelpIcon } from "./icons/HelpIcon"
 
 namespace NoteCard {
   export interface NoteCardProps {
@@ -28,6 +29,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   const initialResizeX = useRef(0)
   const initialResizeY = useRef(0)
   const openContextMenu = signal(false)
+  const showHelp = signal(false)
 
   const { debounce } = useDebounce()
 
@@ -128,6 +130,16 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     openContextMenu.value = false
   }
 
+  function _handleHelpHover() {
+    if (showHelp.value) return
+    showHelp.value = true
+  }
+
+  function _handleHelpOut() {
+    if (!showHelp.value) return
+    showHelp.value = false
+  }
+
   const _handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!e.ctrlKey) return
 
@@ -174,67 +186,85 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
   }
 
   return (
-    <div
-      oncontextmenu={_handleMouseClick}
-      onmousedown={_handleFocusCard}
-      style={cardPositionStyle}
-      className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#efeff0] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
-    >
-      <div className="overflow-hidden flex-1 flex flex-col gap-1">
-        {/* Header Bar */}
-        <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
-          <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+    <>
+      <div
+        oncontextmenu={_handleMouseClick}
+        onmousedown={_handleFocusCard}
+        style={cardPositionStyle}
+        className="overflow-hidden text-[#333] dark:bg-[#1a1a1a] dark:border-[#1c1c1c] bg-[#efeff0] select-none transition flex flex-col justify-stretch shadow-md rounded border border-[#ddd] absolute"
+      >
+        <div className="overflow-hidden flex-1 flex flex-col gap-1">
+          {/* Header Bar */}
+          <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
+            <HelpIcon onMouseOver={_handleHelpHover} onMouseOut={_handleHelpOut} />
+            <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+            <div className="flex gap-2">
+              <div
+                onclick={_handleExportClick}
+                className="flex items-center">
+                <ExportIcon
+                  className="dark:text-[#5c5c5c] cursor-pointer w-4 h-4 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
+                />
+              </div>
 
-          <div className="flex gap-2">
-            <div
-              onclick={_handleExportClick}
-              className="flex items-center">
-              <ExportIcon
-                className="dark:text-[#5c5c5c] cursor-pointer w-4 h-4 text-[#9c9c9c] hover:text-blue-500 transition-color duration-300"
-              />
-            </div>
+              <Divider />
 
-            <Divider />
+              <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
 
-            <button className="text-md dark:text-[#777] text-black" onclick={_handleClose}>x</button>
-
-          </div>
-        </div>
-
-        <hr className="border dark:border-[#2c2c2c] border-[#ddd]" />
-
-        {/* Content Body */}
-        <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
-        <ExpandIcon cb={_handleResizeMouseDown} />
-      </div>
-
-      <ContextMenuPortal open={openContextMenu.value} closeAction={_handleContextClose}>
-        <div className="bg-[#3c3c3c] flex flex-col rounded">
-          <div className="flex justify-between items-center">
-            <div className="text-md dark:text-[#999] text-black px-2 py-1">
-              {item.title}
             </div>
           </div>
 
-          <hr className="border dark:border-[#2c2c2c] border-[#ddd] m-0 p-0" />
+          <hr className="border dark:border-[#2c2c2c] border-[#ddd]" />
 
-          <div>
-            <ul>
-              <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
-                <button onclick={_handleClose} className="text-md dark:text-[#999]  text-black">
-                  Delete
-                </button>
-              </li>
-              <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
-                <button onclick={_handleExportClick} className="text-md dark:text-[#999]  text-black">
-                  export
-                </button>
-              </li>
-            </ul>
+          {/* Content Body */}
+          <MarkDownEditor initial={item.contents} onChange={_handleMdChange} />
+          <ExpandIcon cb={_handleResizeMouseDown} />
+        </div>
+
+        <ContextMenuPortal open={openContextMenu.value} closeAction={_handleContextClose}>
+          <div className="bg-[#3c3c3c] flex flex-col rounded">
+            <div className="flex justify-between items-center">
+              <div className="text-md dark:text-[#999] text-black px-2 py-1">
+                {item.title}
+              </div>
+            </div>
+
+            <hr className="border dark:border-[#2c2c2c] border-[#ddd] m-0 p-0" />
+
+            <div>
+              <ul>
+                <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
+                  <button onclick={_handleClose} className="text-md dark:text-[#999]  text-black">
+                    Delete
+                  </button>
+                </li>
+                <li className="flex items-center gap-2 hover:bg-[#fff] dark:hover:bg-[#1a1a1a] cursor-pointer px-2 py-1">
+                  <button onclick={_handleExportClick} className="text-md dark:text-[#999]  text-black">
+                    export
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ContextMenuPortal>
+      </div >
+
+      {showHelp.value &&
+        <div
+          className={"text-white absolute bg-[#1c1c1c] rounded-md p-1"}
+          style={{
+            top: `${item.position.y}px`,
+            left: `${item.position.x - 120}px`
+          }}
+        >
+          <div className="flex flex-col text-sm dark:text-[#999] text-black">
+            <small>ctrl + del = delete</small>
+            <small>ctrl + back = delete</small>
+            <small>ctrl + e = export</small>
           </div>
         </div>
-      </ContextMenuPortal>
-    </div >
+      }
+    </>
   )
 }
 
