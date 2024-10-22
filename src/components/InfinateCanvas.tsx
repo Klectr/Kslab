@@ -10,10 +10,12 @@ import { Logo } from "./Logo"
 import { useThemeDetector } from "../utils/useThemeDetector"
 import { TextItem } from "./TextItem"
 import texts from "../signals/texts"
+import { useDebounce } from "../utils/useDebounce"
 
 export default function InfiniteCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
   const isDarkTheme = useThemeDetector()
+  const { debounce } = useDebounce()
 
   useEffect(() => {
     const initPos = getInitialPosition(canvasDimentsion)
@@ -27,22 +29,24 @@ export default function InfiniteCanvas() {
     }
 
     function _updatePosition() {
-      localStorage.setItem("pos", JSON.stringify({
-        left: window.scrollX,
-        top: window.scrollY
-      }))
+      debounce(() => {
+        localStorage.setItem("pos", JSON.stringify({
+          left: window.scrollX,
+          top: window.scrollY
+        }))
+      })
     }
 
     _updateDimensions()
     window.addEventListener("resize", _updateDimensions)
-    window.addEventListener("scrollend", _updatePosition)
+    window.addEventListener("scroll", _updatePosition)
     notes.loadLocalStorage()
     images.loadLocalStorage()
     texts.loadLocalStorage()
 
     return () => {
       window.removeEventListener("resize", _updateDimensions)
-      window.removeEventListener("scrollend", _updatePosition)
+      window.removeEventListener("scroll", _updatePosition)
     }
   }, [])
 
