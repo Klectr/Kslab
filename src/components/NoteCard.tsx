@@ -196,8 +196,11 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
         <div className="overflow-hidden flex-1 flex flex-col gap-1">
           {/* Header Bar */}
           <div className="px-2 flex justify-between items-center cursor-move" onmousedown={_handleMouseDown}>
-            <HelpIcon onMouseOver={_handleHelpHover} onMouseOut={_handleHelpOut} />
-            <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+            <div className={"flex gap-1 items-center"}>
+              <HelpIcon onMouseOver={_handleHelpHover} onMouseOut={_handleHelpOut} />
+              {/* Save indicator*/}
+              <div style={saveIndicatorStyle} className="rounded-full w-1 h-1 dark:bg-white bg-green-500"></div>
+            </div>
             <div className="flex gap-2">
               <div
                 onclick={_handleExportClick}
