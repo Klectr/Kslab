@@ -253,7 +253,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCardProps) {
       {/* HOTKEY PAPER */}
       {showHelp.value &&
         <div
-          className={"text-white absolute bg-[#1c1c1c] rounded-md p-1 z-[1000] border border-blue-500"}
+          className={"dark:text-white absolute dark:bg-[#1c1c1c] bg-[#fff] rounded-md p-1 z-[1000] border border-blue-500"}
           style={{
             top: `${item.position.y}px`,
             left: `${item.position.x - 120}px`
