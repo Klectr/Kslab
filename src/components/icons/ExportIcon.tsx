@@ -1,9 +1,8 @@
-namespace ExportIcon {
-  export interface Props {
-    className?: string
-  }
+interface ExportIconProps {
+  className?: string
 }
-export function ExportIcon({ className }: ExportIcon.Props) {
+
+export function ExportIcon({ className }: ExportIconProps) {
 
   return (
     <svg

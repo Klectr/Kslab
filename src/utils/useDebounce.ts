@@ -2,12 +2,12 @@ import { sideEffectsEnabled, useHook } from "kaioken"
 import { noop } from "kaioken/utils"
 
 type UseDebounceState = {
-  timer: number
-  debounce: (this: any, func: Function, timeout?: number) => void
+  timer: Timer | undefined
+  debounce: (func: (...args: unknown[]) => void, timeout?: number) => void
 }
 
 function createState(): UseDebounceState {
-  return { timer: 0, debounce: noop }
+  return { timer: undefined, debounce: noop }
 }
 
 export function useDebounce() {
@@ -17,8 +17,7 @@ export function useDebounce() {
     if (!isInit) return { timer: hook.timer, debounce: hook.debounce }
 
     hook.debounce = function debounce(
-      this: any,
-      func: Function,
+      func: (...args: unknown[]) => void,
       timeout = 300
     ) {
       clearTimeout(hook.timer)

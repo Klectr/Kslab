@@ -1,10 +1,9 @@
-namespace HelpIcon {
-  export interface Props {
-    onMouseOver?: () => void
-    onMouseOut?: () => void
-  }
+interface HelpIconProps {
+  onMouseOver?: () => void
+  onMouseOut?: () => void
 }
-export function HelpIcon({ onMouseOver, onMouseOut }: HelpIcon.Props) {
+
+export function HelpIcon({ onMouseOver, onMouseOut }: HelpIconProps) {
 
   return (
     <svg

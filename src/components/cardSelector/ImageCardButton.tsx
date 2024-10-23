@@ -1,5 +1,6 @@
 import { ImagesSignal } from "../../signals"
 import images from "../../signals/images"
+import { CardTypes } from "../../types"
 import { updateLocalStorage } from "../../utils/localStorage"
 import { useToast } from "../Toast"
 import { Tooltip } from "./Tooltip"
@@ -13,12 +14,16 @@ export function ImageCardButton() {
     input.accept = "image/*"
     input.multiple = false
 
-    input.onchange = (e: any) => {
-      const file = e.target.files[0]
+    input.onchange = (e: Event) => {
+      const el = e.target as HTMLInputElement
+      if (!el.files?.length) return
+      if (!el.files.length) return
+      const file = el.files[0]
+
       const reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onload = function(readerEvent) {
-        let image = document.createElement('img')
+        const image = document.createElement('img')
         image.onload = function() {
           const { width, height } = image
 
@@ -33,7 +38,7 @@ export function ImageCardButton() {
           if (!img) return
 
           const imgId = ImagesSignal.default.addImage({
-            type: "image",
+            type: CardTypes.IMAGES,
             title: "New Image",
             contents: content as string,
             position: {
@@ -47,7 +52,7 @@ export function ImageCardButton() {
           })
 
           try {
-            updateLocalStorage("images", images.images).notify()
+            updateLocalStorage(CardTypes.IMAGES, images.images).notify()
           } catch (e: unknown) {
             if (e instanceof DOMException) {
               if (e.name !== 'QuotaExceededError') return

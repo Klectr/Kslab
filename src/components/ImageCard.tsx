@@ -6,15 +6,14 @@ import images, { ImageCardType } from "../signals/images"
 import { updateLocalStorage } from "../utils/localStorage"
 import { useThemeDetector } from "../utils/useThemeDetector"
 import { ContextMenuPortal } from "./ContextMenuPortal"
+import { CardTypes } from "../types"
 
-namespace ImageCard {
-  export interface ImageCardProps {
-    key: ImageCardType['id']
-    data: ImageCardType
-  }
+interface ImageCardProps {
+  key: ImageCardType['id']
+  data: ImageCardType
 }
 
-export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps) {
+export function ImageCard({ key: itemKey, data: item }: ImageCardProps) {
   const { debounce } = useDebounce()
   const pressed = signal(false)
   const newX = useRef(0)
@@ -27,7 +26,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
 
   function debounceLSUpdate(time?: number) {
     debounce(() => {
-      updateLocalStorage("images", images.images).notify()
+      updateLocalStorage(CardTypes.IMAGES, images.images).notify()
     }, time)
   }
 
@@ -90,7 +89,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
     window.removeEventListener('mouseup', _handleResizeMouseUp)
   }
 
-  function _handleClose(_e: Event) {
+  function _handleClose() {
     ImagesSignal.default.removeImage(item.id)
     ImagesSignal.default.images.notify()
     debounceLSUpdate()
@@ -161,7 +160,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
 
 
 function ExpandIcon({ cb }: {
-  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => void) | null | undefined
 }) {
   const isDarkTheme = useThemeDetector()
   return (

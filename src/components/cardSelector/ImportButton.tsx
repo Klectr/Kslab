@@ -20,8 +20,12 @@ export function ImportButton() {
     input.type = 'file'
     input.accept = ".json"
     input.multiple = false
-    input.onchange = (e: any) => {
-      const file = e.target.files[0]
+    input.onchange = (e: Event) => {
+      if (e.target === null) return
+      const el = e.target as HTMLInputElement
+      if (!el.files?.length) return
+      const file = el.files[0]
+
       const reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onload = function(readerEvent) {
@@ -30,19 +34,19 @@ export function ImportButton() {
         content = (content as string).split(',')[1]
         const data: Record<string, Card<CardTypes>> = convertBase64ToJson(content)
         console.log(data)
-        for (let key in data) {
+        for (const key in data) {
           const item = data[key]
           const { id, ...rest } = item
           console.log(id, rest)
           switch (item.type) {
-            case CardTypes:
+            case CardTypes.IMAGES:
               console.log("adding image: ", rest)
               images.addImage(rest as ImageCardType)
               break;
-            case 'notes':
+            case CardTypes.NOTES:
               notes.addNote(rest as NoteCardType)
               break;
-            case 'texts':
+            case CardTypes.TEXTS:
               texts.addText(rest as TextCardType)
               break;
             default:
@@ -52,9 +56,9 @@ export function ImportButton() {
 
         console.log("images: ", images.images.value)
 
-        updateLocalStorage('notes', notes.notes).notify()
-        updateLocalStorage('images', images.images).notify()
-        updateLocalStorage('texts', texts.texts).notify()
+        updateLocalStorage(CardTypes.NOTES, notes.notes).notify()
+        updateLocalStorage(CardTypes.IMAGES, images.images).notify()
+        updateLocalStorage(CardTypes.TEXTS, texts.texts).notify()
       }
     }
     input.click()

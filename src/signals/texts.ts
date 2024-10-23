@@ -1,8 +1,8 @@
 import { signal } from "kaioken"
-import { Card } from "../types"
+import { Card, CardTypes } from "../types"
 import { focusedItem } from "."
 
-export type TextCardType = Card<"texts"> & {
+export type TextCardType = Card<CardTypes.TEXTS> & {
   fontSize: number
 }
 

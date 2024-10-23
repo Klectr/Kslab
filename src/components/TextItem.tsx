@@ -3,17 +3,15 @@ import { TextSignal, focusedItem } from "../signals"
 import { useDebounce } from "../utils/useDebounce"
 import texts, { TextCardType } from "../signals/texts"
 import { LayerEnum } from "../utils/enums"
-import { Card } from "../types"
+import { Card, CardTypes } from "../types"
 import { useThemeDetector } from "../utils/useThemeDetector"
 
-namespace TextItem {
-  export interface TextCardProps {
-    key: TextCardType['id']
-    data: TextCardType
-  }
+interface TextCardProps {
+  key: TextCardType['id']
+  data: TextCardType
 }
 
-export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
+export function TextItem({ key: itemKey, data: item }: TextCardProps) {
   const { debounce } = useDebounce()
   const pressed = signal(false)
   const newX = useRef(0)
@@ -28,7 +26,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
     const elDems = elRef.current?.getBoundingClientRect()
     const elW = elDems?.width ?? 100
     const elH = elDems?.height ?? 100
-    const newDems: Card<'texts'>['dimensions'] = { w: elW, h: elH }
+    const newDems: Card<CardTypes.TEXTS>['dimensions'] = { w: elW, h: elH }
     TextSignal.default.updateTextProperty(itemKey, 'dimensions', newDems)
     TextSignal.default.texts.notify()
   }, [elRef.current, item.fontSize])
@@ -37,7 +35,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
 
   function updateLocalStorage(time?: number) {
     debounce(() => {
-      localStorage.setItem("texts", JSON.stringify(texts.texts.value))
+      localStorage.setItem(CardTypes.TEXTS, JSON.stringify(texts.texts.value))
     }, time)
   }
 
@@ -87,7 +85,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
     window.addEventListener('mouseup', _handleResizeMouseUp)
   }
 
-  function _handleResizeMouseUp(_e: MouseEvent) {
+  function _handleResizeMouseUp() {
     pressed.value = false
     window.removeEventListener('mousemove', _handleResizeMove)
     window.removeEventListener('mouseup', _handleResizeMouseUp)
@@ -157,7 +155,7 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
       >
         <p
           ref={pRef}
-          //@ts-expect-error
+          //@ts-expect-error oninput doesnt exist on the props type
           oninput={_handleContentInput}
           contentEditable
           className={'text-p inline-block px-2 w-full select-none drop-shadow relative'}>
@@ -171,13 +169,12 @@ export function TextItem({ key: itemKey, data: item }: TextItem.TextCardProps) {
   )
 }
 
-namespace CloseIcon {
-  export interface Props {
-    cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
-    item: TextSignal.TextCardType
-  }
+interface CloseIconProps {
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => void) | null | undefined,
+  item: TextSignal.TextCardType
 }
-function CloseIcon({ item, cb }: CloseIcon.Props) {
+
+function CloseIcon({ item, cb }: CloseIconProps) {
   const isDark = useThemeDetector()
   return (
     <svg
@@ -204,13 +201,12 @@ function CloseIcon({ item, cb }: CloseIcon.Props) {
   )
 }
 
-namespace ExpandIcon {
-  export interface Props {
-    cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined,
-    item: TextSignal.TextCardType
-  }
+interface ExpandIconProps {
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => void) | null | undefined,
+  item: TextSignal.TextCardType
 }
-function ExpandIcon({ cb, item }: ExpandIcon.Props) {
+
+function ExpandIcon({ cb, item }: ExpandIconProps) {
   const isDark = useThemeDetector()
   return (
     <svg

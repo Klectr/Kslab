@@ -8,9 +8,8 @@ export function updateLocalStorage(
   try {
     localStorage.setItem(location, JSON.stringify(collection.value))
   } catch (e) {
-    // throw new Error("Could not update local storage")
     throw new DOMException(
-      "Could not update local storage",
+      "Could not update local storage " + e,
       "LocalStorageError"
     )
   }

@@ -24,7 +24,7 @@ export function MiniMap() {
 
 
   useEffect(() => {
-    function _handleScroll(_e: Event) {
+    function _handleScroll() {
       scrollX.value = window.scrollX
       scrollY.value = window.scrollY
     }
@@ -47,7 +47,7 @@ export function MiniMap() {
         const image = images.images.value[imageKey]
         const el = useRef(null)
 
-        function _handleItemClick(_e: MouseEvent) {
+        function _handleItemClick() {
           const newLeft = image.position.x - ((viewportWidth / 2) - (image.dimensions.w / 2))
           const newTop = image.position.y - ((viewportHeight / 2) - (image.dimensions.h / 2))
 
@@ -65,7 +65,7 @@ export function MiniMap() {
         const newZIndex = LayerEnum.MINIMAP + 1
 
         return (
-          <div ref={el} className={"absolute dark:bg-green-500 bg-green-300 dark:hover:bg-blue-500 hover:bg-blue-300 cursor-pointer border dark:border-[#222] border-green-500 rounded"}
+          <div key={imageKey} ref={el} className={"absolute dark:bg-green-500 bg-green-300 dark:hover:bg-blue-500 hover:bg-blue-300 cursor-pointer border dark:border-[#222] border-green-500 rounded"}
             onclick={_handleItemClick}
             style={{
               width: `${newWidth}px`,
@@ -82,7 +82,7 @@ export function MiniMap() {
       {Object.keys(notes.notes.value).map((noteKey: NoteCardType['id']) => {
         const note = notes.notes.value[noteKey]
 
-        function _handleItemClick(_e: MouseEvent) {
+        function _handleItemClick() {
           const newLeft = note.position.x - ((viewportWidth / 2) - (note.dimensions.w / 2))
           const newTop = note.position.y - ((viewportHeight / 2) - (note.dimensions.h / 2))
           window.scrollTo({
@@ -99,7 +99,7 @@ export function MiniMap() {
         const newZIndex = LayerEnum.MINIMAP + 1
 
         return (
-          <div className={"absolute dark:bg-gray-500 bg-gray-300 hover:bg-blue-500 cursor-pointer border dark:border-[#222] border-gray-400 rounded"}
+          <div key={noteKey} className={"absolute dark:bg-gray-500 bg-gray-300 hover:bg-blue-500 cursor-pointer border dark:border-[#222] border-gray-400 rounded"}
             onclick={_handleItemClick}
             style={{
               width: `${newWidth}px`,
@@ -116,7 +116,7 @@ export function MiniMap() {
         const text = texts.texts.value[textKey]
         const el = useRef(null)
 
-        function _handleItemClick(_e: MouseEvent) {
+        function _handleItemClick() {
           window.scrollTo({
             left: text.position.x - ((viewportWidth / 2) - (text.dimensions.w / 2)),
             top: text.position.y - ((viewportHeight / 2) - (text.dimensions.h / 2)),
@@ -125,7 +125,7 @@ export function MiniMap() {
         }
 
         return (
-          <div ref={el} className={"bg-indigo-500 hover:bg-blue-500 cursor-pointer rounded"}
+          <div key={textKey} ref={el} className={"bg-indigo-500 hover:bg-blue-500 cursor-pointer rounded"}
             onclick={_handleItemClick}
             style={{
               position: 'absolute',

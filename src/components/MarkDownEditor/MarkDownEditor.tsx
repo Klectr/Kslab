@@ -2,14 +2,12 @@ import { Editor, Listener } from 'tiny-markdown-editor'
 import './md.css'
 import { useEffect, useRef } from "kaioken"
 
-namespace MarkDownEditor {
-  export interface Props {
-    initial: string
-    onChange: Listener<'change'>
-  }
+interface MarkDownEditorProps {
+  initial: string
+  onChange: Listener<'change'>
 }
 
-export function MarkDownEditor({ initial, onChange }: MarkDownEditor.Props) {
+export function MarkDownEditor({ initial, onChange }: MarkDownEditorProps) {
   const elRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

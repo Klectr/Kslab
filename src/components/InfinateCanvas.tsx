@@ -110,7 +110,7 @@ function getInitialPosition(canvasDimensions: typeof canvasDimentsion): ScrollTo
   try {
     initPosition = JSON.parse(localStorage.getItem("pos") ?? "")
   } catch (e) {
-    console.error("no local storage for pos")
+    console.error("no local storage for pos " + e)
   }
 
   if (!initPosition) return defaultScroll

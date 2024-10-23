@@ -12,14 +12,12 @@ import { createFileAndExport } from "../utils/createFileAndExport"
 import { ContextMenuPortal } from "./ContextMenuPortal"
 import { HelpIcon } from "./icons/HelpIcon"
 
-namespace NoteCard {
-  export interface NoteCardProps {
-    key: NoteCardType['id']
-    data: NoteCardType
-  }
+interface NoteCardProps {
+  key: NoteCardType['id']
+  data: NoteCardType
 }
 
-export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
+export function NoteCard({ key: itemKey, data: item }: NoteCardProps) {
   const saved = signal(true)
   const pressed = signal(false)
   const newX = useRef(0)
@@ -103,7 +101,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     saved.value = false
   }
 
-  function _handleClose(_e: Event) {
+  function _handleClose() {
     NotesSigal.default.removeNote(item.id)
     NotesSigal.default.notes.notify()
     updateLocalStorage()
@@ -117,7 +115,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     createFileAndExport("Note", item.contents, "text/markdown")
   }
 
-  function _handleExportClick(_e: MouseEvent) {
+  function _handleExportClick() {
     _exportFile()
   }
 
@@ -149,11 +147,11 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
     switch (e.key) {
       case 'Delete':
         e.preventDefault()
-        _handleClose(e)
+        _handleClose()
         break
       case 'Backspace':
         e.preventDefault()
-        _handleClose(e)
+        _handleClose()
         break
       case 'e':
         e.preventDefault()
@@ -273,7 +271,7 @@ export function NoteCard({ key: itemKey, data: item }: NoteCard.NoteCardProps) {
 }
 
 function ExpandIcon({ cb }: {
-  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+  cb: ((this: GlobalEventHandlers, ev: MouseEvent) => void) | null | undefined
 }) {
   const isDarkTheme = useThemeDetector()
 

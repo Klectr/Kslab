@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "kaioken"
+import { noop } from "kaioken/utils"
 
 type Toast = {
   ts: number
@@ -21,11 +22,15 @@ const defaultDuration = 3000
 
 const ToastContext = createContext<{
   showToast: (type: Toast["type"], message: string) => void
-}>(null as any)
+}>({ showToast: noop })
 
 export const useToast = () => useContext(ToastContext)
 
-export const ToastContextProvider: Kaioken.FC = ({ children }) => {
+interface ToastProviderProps {
+  children: JSX.Children
+}
+
+export function ToastContextProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   useEffect(() => {

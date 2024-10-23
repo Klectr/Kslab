@@ -9,11 +9,11 @@ export enum CardTypes {
 
 type Base64 = string
 
-export interface Card<Ttype extends CardTypes> {
+export interface Card<TCard extends CardTypes> {
   id: string
-  type: Ttype
+  type: TCard
   title: string
-  contents: Ttype extends "image" ? Base64 : string
+  contents: TCard extends "image" ? Base64 : string
   position: positionCoords
   dimensions: dimensionCoords
 }
