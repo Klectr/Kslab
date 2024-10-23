@@ -1,9 +1,21 @@
 import { defineConfig } from "vite"
 import kaioken from "vite-plugin-kaioken"
+import eslint from "vite-plugin-eslint"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [kaioken()],
+  plugins: [
+    kaioken(),
+    eslint({
+      cache: true,
+      exclude: ["src-tauri/**/*"],
+      emitError: true,
+      emitWarning: true,
+      failOnError: false,
+      failOnWarning: false,
+      lintOnStart: true,
+    }),
+  ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors
