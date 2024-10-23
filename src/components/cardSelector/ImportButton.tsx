@@ -1,6 +1,7 @@
-import images from "../../signals/images"
-import notes from "../../signals/notes"
-import { Card } from "../../types"
+import images, { ImageCardType } from "../../signals/images"
+import notes, { NoteCardType } from "../../signals/notes"
+import texts, { TextCardType } from "../../signals/texts"
+import { Card, CardTypes } from "../../types"
 import { convertBase64ToJson } from "../../utils/convertBase64ToJson"
 import { updateLocalStorage } from "../../utils/localStorage"
 import { Tooltip } from "./Tooltip"
@@ -9,6 +10,12 @@ import { defaultClassName } from "./utils"
 export function ImportButton() {
 
   function _handleImport() {
+    // guard clause to prevent overwriting existing cards
+    if (images.images.value || notes.notes.value) {
+      const isConfirmed = confirm("Are you sure you want to overwrite your existing cards?")
+      if (!isConfirmed) return
+    }
+
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = ".json"
@@ -21,24 +28,33 @@ export function ImportButton() {
         let content = readerEvent.target?.result;
         // get only the base64 parts and not any identifiers
         content = (content as string).split(',')[1]
-        const data: Record<string, Card<'notes'> | Card<'images'>> = convertBase64ToJson(content)
+        const data: Record<string, Card<CardTypes>> = convertBase64ToJson(content)
+        console.log(data)
         for (let key in data) {
           const item = data[key]
-          if (item.type == 'images') {
-            const { id, ...rest } = item
-            images.addImage(rest)
-          }
-
-          if (item.type == 'notes') {
-            const { id, ...rest } = item
-            notes.addNote(rest)
+          const { id, ...rest } = item
+          console.log(id, rest)
+          switch (item.type) {
+            case CardTypes:
+              console.log("adding image: ", rest)
+              images.addImage(rest as ImageCardType)
+              break;
+            case 'notes':
+              notes.addNote(rest as NoteCardType)
+              break;
+            case 'texts':
+              texts.addText(rest as TextCardType)
+              break;
+            default:
+              break;
           }
         }
 
-        updateLocalStorage('notes', notes.notes.value)
-        updateLocalStorage('images', images.images.value)
-        notes.notes.notify()
-        images.images.notify()
+        console.log("images: ", images.images.value)
+
+        updateLocalStorage('notes', notes.notes).notify()
+        updateLocalStorage('images', images.images).notify()
+        updateLocalStorage('texts', texts.texts).notify()
       }
     }
     input.click()

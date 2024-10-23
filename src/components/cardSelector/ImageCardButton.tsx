@@ -47,7 +47,7 @@ export function ImageCardButton() {
           })
 
           try {
-            updateLocalStorage("images", images.images.value)
+            updateLocalStorage("images", images.images).notify()
           } catch (e: unknown) {
             if (e instanceof DOMException) {
               if (e.name !== 'QuotaExceededError') return

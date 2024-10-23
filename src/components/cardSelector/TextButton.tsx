@@ -21,7 +21,7 @@ export function TextButton() {
         h: 100
       }
     })
-    updateLocalStorage("texts", texts.texts.value)
+    updateLocalStorage("texts", texts.texts).notify()
   }
 
   return (

@@ -15,6 +15,7 @@ function addImage(data: Omit<ImageCardType, "id">) {
     ...data,
     id: crypto.randomUUID(),
   }
+  console.log("adding image: ", newCard)
   images.value[newCard.id] = newCard
   images.notify()
   focusedItem.value = newCard.id

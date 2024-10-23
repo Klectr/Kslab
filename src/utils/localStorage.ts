@@ -1,8 +1,18 @@
-import { CardTypes } from "../types"
+import { Signal } from "kaioken"
+import { Card, CardTypes } from "../types"
 
 export function updateLocalStorage(
   location: CardTypes,
-  collection: unknown[] | Record<string, unknown>
+  collection: Signal<Record<string, Card<CardTypes>>>
 ) {
-  localStorage.setItem(location, JSON.stringify(collection))
+  try {
+    localStorage.setItem(location, JSON.stringify(collection.value))
+  } catch (e) {
+    // throw new Error("Could not update local storage")
+    throw new DOMException(
+      "Could not update local storage",
+      "LocalStorageError"
+    )
+  }
+  return collection
 }

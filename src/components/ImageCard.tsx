@@ -27,7 +27,7 @@ export function ImageCard({ key: itemKey, data: item }: ImageCard.ImageCardProps
 
   function debounceLSUpdate(time?: number) {
     debounce(() => {
-      updateLocalStorage("images", images.images.value)
+      updateLocalStorage("images", images.images).notify()
     }, time)
   }
 

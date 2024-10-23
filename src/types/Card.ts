@@ -1,6 +1,11 @@
-export type CardTypes = "notes" | "images" | "texts"
 export type positionCoords = { x: number; y: number }
 export type dimensionCoords = { w: number; h: number }
+
+export enum CardTypes {
+  NOTES = "notes",
+  IMAGES = "images",
+  TEXTS = "texts",
+}
 
 type Base64 = string
 
