@@ -7,11 +7,13 @@ import { updateLocalStorage } from "../../utils/localStorage"
 import { Tooltip } from "./Tooltip"
 import { defaultClassName } from "./utils"
 
+type legacySupportTypes = { type: CardTypes | string }
+
 export function ImportButton() {
 
   function _handleImport() {
     // guard clause to prevent overwriting existing cards
-    if (images.images.value || notes.notes.value) {
+    if (Object.keys(images.images.value).length || Object.keys(notes.notes.value).length) {
       const isConfirmed = confirm("Are you sure you want to overwrite your existing cards?")
       if (!isConfirmed) return
     }
@@ -32,29 +34,21 @@ export function ImportButton() {
         let content = readerEvent.target?.result;
         // get only the base64 parts and not any identifiers
         content = (content as string).split(',')[1]
-        const data: Record<string, Card<CardTypes>> = convertBase64ToJson(content)
-        console.log(data)
+        const data: Record<string, Omit<Card<CardTypes>, 'type'> & legacySupportTypes> = convertBase64ToJson(content)
         for (const key in data) {
           const item = data[key]
-          const { id, ...rest } = item
-          console.log(id, rest)
-          switch (item.type) {
-            case CardTypes.IMAGES:
-              console.log("adding image: ", rest)
-              images.addImage(rest as ImageCardType)
-              break;
-            case CardTypes.NOTES:
-              notes.addNote(rest as NoteCardType)
-              break;
-            case CardTypes.TEXTS:
-              texts.addText(rest as TextCardType)
-              break;
-            default:
-              break;
+          const { id: _, ...rest } = item
+          if (item.type === CardTypes.IMAGES || item.type == 'image') {
+            images.addImage(rest as ImageCardType)
+            continue
+          } else if (item.type === CardTypes.NOTES || item.type === 'note') {
+            notes.addNote(rest as NoteCardType)
+            continue
+          } else if (item.type === CardTypes.TEXTS || item.type === 'text') {
+            texts.addText(rest as TextCardType)
+            continue
           }
         }
-
-        console.log("images: ", images.images.value)
 
         updateLocalStorage(CardTypes.NOTES, notes.notes).notify()
         updateLocalStorage(CardTypes.IMAGES, images.images).notify()
