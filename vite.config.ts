@@ -1,6 +1,7 @@
 import { defineConfig } from "vite"
 import kaioken from "vite-plugin-kaioken"
 import eslint from "vite-plugin-eslint"
+import checker from "vite-plugin-checker"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,12 +9,15 @@ export default defineConfig({
     kaioken(),
     eslint({
       cache: true,
-      exclude: ["src-tauri/**/*"],
+      ignorePatterns: ["src-tauri"],
       emitError: true,
       emitWarning: true,
       failOnError: false,
       failOnWarning: false,
       lintOnStart: true,
+    }),
+    checker({
+      typescript: true,
     }),
   ],
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
