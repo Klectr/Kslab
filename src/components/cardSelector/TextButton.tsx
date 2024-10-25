@@ -3,13 +3,14 @@ import { TextSignal } from "../../signals";
 import texts from "../../signals/texts";
 import { updateLocalStorage } from "../../utils/localStorage";
 import { defaultClassName } from "./utils";
+import { CardTypes } from "../../types";
 
 export function TextButton() {
 
   function _handleClick(e: MouseEvent) {
     TextSignal.default.addText({
       fontSize: 84,
-      type: "texts",
+      type: CardTypes.TEXTS,
       title: "New Note",
       contents: "todo: fill me",
       position: {
@@ -21,7 +22,7 @@ export function TextButton() {
         h: 100
       }
     })
-    updateLocalStorage("texts", texts.texts).notify()
+    updateLocalStorage(CardTypes.TEXTS, texts.texts).notify()
   }
 
   return (

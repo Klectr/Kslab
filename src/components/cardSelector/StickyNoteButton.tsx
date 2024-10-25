@@ -1,5 +1,6 @@
 import { NotesSigal } from "../../signals"
 import notes from "../../signals/notes"
+import { CardTypes } from "../../types"
 import { updateLocalStorage } from "../../utils/localStorage"
 import { Tooltip } from "./Tooltip"
 import { defaultClassName } from "./utils"
@@ -7,7 +8,7 @@ import { defaultClassName } from "./utils"
 export function StickyNoteButton() {
   function _handleClick(e: MouseEvent) {
     NotesSigal.default.addNote({
-      type: "note",
+      type: CardTypes.NOTES,
       title: "New Note",
       contents: "",
       position: {
@@ -19,7 +20,7 @@ export function StickyNoteButton() {
         h: 200
       }
     })
-    updateLocalStorage("notes", notes.notes.value)
+    updateLocalStorage(CardTypes.NOTES, notes.notes)
   }
 
   return (
