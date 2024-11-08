@@ -2,7 +2,7 @@ import { sideEffectsEnabled, useHook } from "kaioken"
 import { noop } from "kaioken/utils"
 
 type UseDebounceState = {
-  timer: Timer | undefined
+  timer: NodeJS.Timeout | undefined
   debounce: (func: (...args: unknown[]) => void, timeout?: number) => void
 }
 
